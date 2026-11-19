@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { api } from '@/lib/api';
 import { StudentAttendanceResponse, User } from '@/types';
 import {
@@ -16,7 +17,8 @@ import {
   RefreshCw,
   Award,
   ShieldCheck,
-  AlertTriangle
+  AlertTriangle,
+  QrCode
 } from 'lucide-react';
 
 interface StudentDashboardProps {
@@ -135,7 +137,14 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ currentUser 
           </p>
         </div>
 
-        <div className="flex items-center gap-3 relative z-10">
+        <div className="flex items-center gap-3 relative z-10 flex-wrap">
+          <Link
+            href="/checkin"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-slate-900 hover:bg-cyan-50 font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
+          >
+            <QrCode className="w-4 h-4 text-[#007791]" />
+            <span>Check In to Class (QR & Face)</span>
+          </Link>
           <button
             onClick={handleRefresh}
             disabled={refreshing}

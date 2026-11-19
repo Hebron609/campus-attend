@@ -1,10 +1,9 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { User } from '@/types';
 import { AITLogo } from './AITLogo';
-import { LogOut, Shield, GraduationCap, BookOpen, QrCode } from 'lucide-react';
+import { LogOut, Shield, GraduationCap, BookOpen } from 'lucide-react';
 
 interface NavbarProps {
   user: User;
@@ -50,28 +49,17 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 API Live
               </span>
-              <span className="text-slate-400">CS403 Final Project</span>
+              <span className="text-slate-400">CS403 Capstone Project</span>
             </div>
           </div>
 
           <div className="flex items-center gap-3 sm:gap-4">
-            {/* Student Self Check-in Quick Link */}
-            <Link
-              href="/checkin"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold text-cyan-800 bg-cyan-50 hover:bg-cyan-100 border border-cyan-200 transition-all duration-150 cursor-pointer active:scale-95 shadow-2xs"
-              title="Open Student QR & Face Check-in"
-            >
-              <QrCode className="w-4 h-4 text-cyan-700" />
-              <span className="hidden sm:inline">Self Check-In (QR & Camera)</span>
-              <span className="sm:hidden">Check-In</span>
-            </Link>
-
             <div className="text-right hidden sm:block">
               <p className="text-sm font-bold text-slate-900 leading-tight">{user.name}</p>
               <p className="text-xs text-slate-500 font-medium">{user.email}</p>
             </div>
 
-            <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-bold ${badge.className}`}>
+            <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold ${badge.className}`}>
               {badge.icon}
               <span>{badge.label}</span>
             </div>
