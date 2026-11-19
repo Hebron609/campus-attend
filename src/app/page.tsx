@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { User } from '@/types';
 import { api, authStorage } from '@/lib/api';
 import { Navbar } from '@/components/Navbar';
@@ -8,7 +9,7 @@ import { LoginModal } from '@/components/LoginModal';
 import { AdminDashboard } from '@/components/AdminDashboard';
 import { LecturerDashboard } from '@/components/LecturerDashboard';
 import { StudentDashboard } from '@/components/StudentDashboard';
-import { Shield, BookOpen, GraduationCap, Users, RefreshCw } from 'lucide-react';
+import { Shield, BookOpen, GraduationCap, Users, RefreshCw, QrCode } from 'lucide-react';
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -153,6 +154,18 @@ export default function Home() {
               <GraduationCap className="w-3 h-3" />
               <span>Student (Yaw)</span>
             </button>
+
+            <span className="text-slate-600 hidden sm:inline">|</span>
+
+            {/* Quick Link to Student Self Check-in */}
+            <Link
+              href="/checkin"
+              target="_blank"
+              className="px-2.5 py-1 rounded-md text-[11px] font-bold bg-cyan-600 hover:bg-cyan-500 text-white transition-all cursor-pointer flex items-center gap-1 shadow-xs"
+            >
+              <QrCode className="w-3 h-3" />
+              <span>Student Check-in (Scan QR) ↗</span>
+            </Link>
           </div>
         </div>
       </aside>

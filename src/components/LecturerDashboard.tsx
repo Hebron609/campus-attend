@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { api, ApiError } from '@/lib/api';
 import { Course, CourseSummary, Enrolment, ClassSession, User } from '@/types';
+import { QRProjectorModal } from './QRProjectorModal';
 import {
   BookOpen,
   Calendar,
@@ -20,7 +21,9 @@ import {
   FileCheck,
   UserCheck,
   ChevronRight,
-  Info
+  Info,
+  QrCode,
+  Sparkles
 } from 'lucide-react';
 
 interface LecturerDashboardProps {
@@ -46,6 +49,9 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
   const [attendanceMap, setAttendanceMap] = useState<Record<number, 'present' | 'absent'>>({});
   const [savingAttendance, setSavingAttendance] = useState(false);
 
+  // Live QR Projector Modal State
+  const [showQRModal, setShowQRModal] = useState(false);
+
   // Session history state
   const [sessions, setSessions] = useState<ClassSession[]>([]);
   const [loadingSessions, setLoadingSessions] = useState(false);
@@ -53,7 +59,6 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
   const [loadingSessionDetail, setLoadingSessionDetail] = useState(false);
 
   // Course summary state
-  const [summaryCourse, setSummaryCourse] = useState<Course | null>(null);
   const [courseSummary, setCourseSummary] = useState<CourseSummary | null>(null);
   const [loadingSummary, setLoadingSummary] = useState(false);
 
@@ -90,7 +95,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
     try {
       const res = await api.enrolments.list(courseId);
       setRoster(res.enrolments);
-      // Pre-fill default status as 'present' for convenience
+      // Pre-fill initial map
       const initialMap: Record<number, 'present' | 'absent'> = {};
       res.enrolments.forEach((e) => {
         initialMap[e.student.id] = 'present';
@@ -143,8 +148,8 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
   };
 
   // Submit attendance record (FR-05 & FR-06)
-  const handleSubmitAttendance = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmitAttendance = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!selectedCourse) return;
 
     if (roster.length === 0) {
@@ -170,6 +175,9 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
 
       setSuccessMsg(`Attendance saved successfully for ${res.saved} students on ${sessionDate}!`);
       setTimeout(() => setSuccessMsg(null), 5000);
+
+      // Close QR Projector if open
+      setShowQRModal(false);
 
       // Refresh sessions and summaries
       loadSessions(selectedCourse.id);
@@ -223,7 +231,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
             Welcome, {currentUser.name}
           </h1>
           <p className="mt-1 text-sm text-cyan-100 max-w-xl">
-            Record dated class sessions, track student presence, and review auto-calculated course attendance percentages.
+            Record dated class sessions, project dynamic attendance QR codes with facial verification, and audit student percentages.
           </p>
         </div>
 
@@ -258,7 +266,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
         </div>
       )}
 
-      {/* Course Selector Bar (if multiple assigned) */}
+      {/* Course Selector Bar */}
       <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <span className="text-xs font-bold text-slate-700 uppercase whitespace-nowrap">Select Course:</span>
@@ -320,33 +328,40 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
       {/* VIEW: TAKE ATTENDANCE (FR-05 & FR-06) */}
       {activeTab === 'record' && (
         <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-5">
             <div>
               <h2 className="text-lg font-black text-slate-900">
                 Record Class Session Attendance
               </h2>
               <p className="text-xs text-slate-500">
-                Mark each enrolled student as present or absent for the date. Full roster must be submitted atomically.
+                Use the new automated QR Projector mode or manually toggle statuses below.
               </p>
             </div>
 
-            {/* Session Date Input */}
-            <div className="flex items-center gap-2">
-              <label className="text-xs font-bold text-slate-700 uppercase">Class Date:</label>
-              <input
-                type="date"
-                required
-                value={sessionDate}
-                onChange={(e) => setSessionDate(e.target.value)}
-                className="px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-semibold focus:ring-2 focus:ring-[#007791] focus:outline-hidden"
-              />
-              <button
-                type="button"
-                onClick={() => setSessionDate(new Date().toISOString().slice(0, 10))}
-                className="px-2.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold"
-              >
-                Today
-              </button>
+            <div className="flex items-center gap-3">
+              {/* Date Input */}
+              <div className="flex items-center gap-2">
+                <label className="text-xs font-bold text-slate-700 uppercase">Class Date:</label>
+                <input
+                  type="date"
+                  required
+                  value={sessionDate}
+                  onChange={(e) => setSessionDate(e.target.value)}
+                  className="px-3 py-1.5 rounded-xl border border-slate-300 text-xs font-semibold focus:ring-2 focus:ring-[#007791] focus:outline-hidden"
+                />
+              </div>
+
+              {/* LAUNCH LIVE QR PROJECTOR BUTTON */}
+              {selectedCourse && (
+                <button
+                  type="button"
+                  onClick={() => setShowQRModal(true)}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-700 to-[#007791] hover:from-sky-800 hover:to-cyan-800 text-white font-extrabold text-xs shadow-md shadow-cyan-900/20 cursor-pointer transition-all active:scale-95"
+                >
+                  <QrCode className="w-4 h-4 text-cyan-200" />
+                  <span>Launch Live QR Projector</span>
+                </button>
+              )}
             </div>
           </div>
 
@@ -364,19 +379,19 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
             <form onSubmit={handleSubmitAttendance} className="space-y-6">
               {/* Batch Actions & Stats */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-cyan-50/60 p-4 rounded-2xl border border-cyan-100">
-                <div className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                <div className="flex items-center gap-2 text-xs font-semibold text-slate-700 flex-wrap">
                   <span className="w-2 h-2 rounded-full bg-cyan-600"></span>
-                  <span>Enrolled Roster: <strong>{roster.length} students</strong></span>
+                  <span>Enrolled: <strong>{roster.length} students</strong></span>
                   <span className="text-slate-300">•</span>
                   <span>
-                    Marked Present:{' '}
+                    Present:{' '}
                     <strong className="text-emerald-700">
                       {Object.values(attendanceMap).filter((s) => s === 'present').length}
                     </strong>
                   </span>
                   <span className="text-slate-300">•</span>
                   <span>
-                    Marked Absent:{' '}
+                    Absent:{' '}
                     <strong className="text-rose-700">
                       {Object.values(attendanceMap).filter((s) => s === 'absent').length}
                     </strong>
@@ -675,7 +690,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
         </div>
       )}
 
-      {/* MODAL: VIEW PAST SESSION DETAIL (FR-07 Reopened with records) */}
+      {/* MODAL: VIEW PAST SESSION DETAIL */}
       {selectedSessionDetail && (
         <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl border border-slate-100 max-h-[85vh] overflow-y-auto animate-in fade-in zoom-in-95">
@@ -722,6 +737,20 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
             </div>
           </div>
         </div>
+      )}
+
+      {/* MODAL: LIVE DYNAMIC QR CODE PROJECTOR SCREEN */}
+      {showQRModal && selectedCourse && (
+        <QRProjectorModal
+          course={selectedCourse}
+          sessionDate={sessionDate}
+          roster={roster}
+          attendanceMap={attendanceMap}
+          onUpdateAttendance={handleToggleStudent}
+          onFinalizeSave={() => handleSubmitAttendance()}
+          onClose={() => setShowQRModal(false)}
+          saving={savingAttendance}
+        />
       )}
     </div>
   );
