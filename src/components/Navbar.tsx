@@ -44,13 +44,6 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
         <div className="flex items-center justify-between h-16 sm:h-20">
           <div className="flex items-center gap-6">
             <AITLogo size="md" />
-            <div className="hidden lg:flex items-center gap-2 pl-4 border-l border-slate-200 text-xs font-semibold text-slate-500">
-              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                API Live
-              </span>
-              <span className="text-slate-400">CS403 Capstone Project</span>
-            </div>
           </div>
 
           <div className="flex items-center gap-3 sm:gap-4">
