@@ -121,18 +121,18 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ currentUser 
       : allRecords.filter((r) => r.courseId === selectedCourseFilter);
 
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-12 py-8 space-y-8">
+    <div className="w-full px-3 sm:px-6 lg:px-10 xl:px-12 py-5 sm:py-8 space-y-6 sm:space-y-8">
       {/* Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-sky-900 via-[#007791] to-cyan-700 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-cyan-950/15 relative overflow-hidden">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-sky-900 via-[#007791] to-cyan-700 rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-white shadow-xl shadow-cyan-950/15 relative overflow-hidden">
         <div className="relative z-10">
           <div className="flex items-center gap-2 text-cyan-200 text-xs font-bold uppercase tracking-wider mb-2">
             <GraduationCap className="w-4 h-4 text-cyan-300" />
             <span>Student Academic Portal</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
+          <h1 className="text-xl sm:text-3xl font-black tracking-tight">
             Hello, {currentUser.name}
           </h1>
-          <p className="mt-1 text-sm text-cyan-100 max-w-xl">
+          <p className="mt-1 text-xs sm:text-sm text-cyan-100 max-w-xl">
             Track your personal attendance records, review course percentages, and ensure you meet academic exam eligibility criteria.
           </p>
         </div>
@@ -140,7 +140,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ currentUser 
         <div className="flex items-center gap-3 relative z-10 flex-wrap">
           <Link
             href="/checkin"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-slate-900 hover:bg-cyan-50 font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white text-slate-900 hover:bg-cyan-50 font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer w-full sm:w-auto"
           >
             <QrCode className="w-4 h-4 text-[#007791]" />
             <span>Check In to Class (QR & Face)</span>
@@ -148,7 +148,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ currentUser 
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white font-semibold text-xs transition-all active:scale-95 cursor-pointer backdrop-blur-xs"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white font-semibold text-xs transition-all active:scale-95 cursor-pointer backdrop-blur-xs w-full sm:w-auto"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
             <span>Refresh Records</span>
@@ -382,8 +382,8 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ currentUser 
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-slate-200">
-            <table className="w-full text-left text-xs">
+          <div className="overflow-x-auto rounded-2xl border border-slate-200 -mx-1 sm:mx-0">
+            <table className="w-full text-left text-xs min-w-[540px]">
               <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold">
                 <tr>
                   <th className="py-3.5 px-4">Session Date</th>

@@ -146,13 +146,13 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
   const percentPresent = totalStudents > 0 ? Math.round((presentCount / totalStudents) * 100) : 0;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto w-full">
-      <div className="bg-white rounded-3xl w-full max-w-[94vw] xl:max-w-7xl shadow-2xl border border-white/20 overflow-hidden animate-in fade-in zoom-in-95 flex flex-col my-auto max-h-[92vh]">
+    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-6 overflow-y-auto w-full">
+      <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-[96vw] xl:max-w-7xl shadow-2xl border border-white/20 overflow-hidden animate-in fade-in zoom-in-95 flex flex-col my-auto max-h-[94vh]">
         {/* Projector Top Header */}
-        <div className="bg-gradient-to-r from-sky-950 via-[#007791] to-cyan-700 px-6 sm:px-8 py-5 text-white flex items-center justify-between">
+        <div className="bg-gradient-to-r from-sky-950 via-[#007791] to-cyan-700 px-4 sm:px-8 py-4 sm:py-5 text-white flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-white/10 border border-white/20 backdrop-blur-xs">
-              <Smartphone className="w-6 h-6 text-cyan-200" />
+            <div className="p-2 sm:p-2.5 rounded-xl bg-white/10 border border-white/20 backdrop-blur-xs">
+              <Smartphone className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-200" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -161,7 +161,7 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
                 </span>
                 <span className="text-xs text-cyan-200 font-semibold">• Date: {sessionDate}</span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-black tracking-tight mt-0.5">
+              <h2 className="text-base sm:text-2xl font-black tracking-tight mt-0.5">
                 {course.name}
               </h2>
             </div>
@@ -177,15 +177,15 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
         </div>
 
         {/* Content Body */}
-        <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 overflow-y-auto">
+        <div className="p-4 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 overflow-y-auto">
           {/* Left: Dynamic QR Code Presentation */}
-          <div className="lg:col-span-7 flex flex-col items-center justify-center text-center space-y-5 bg-gradient-to-b from-slate-50 to-cyan-50/40 p-6 sm:p-8 rounded-3xl border border-cyan-100">
+          <div className="lg:col-span-7 flex flex-col items-center justify-center text-center space-y-4 sm:space-y-5 bg-gradient-to-b from-slate-50 to-cyan-50/40 p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-cyan-100">
             <div>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-100/80 text-[#007791] text-xs font-extrabold uppercase tracking-wider mb-1">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>Anti-Proxy Dynamic QR Code</span>
               </span>
-              <h3 className="text-lg font-black text-slate-900">
+              <h3 className="text-base sm:text-lg font-black text-slate-900">
                 Scan with Smartphone to Check In
               </h3>
               <p className="text-xs text-slate-500 max-w-sm mx-auto">
@@ -194,21 +194,21 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
             </div>
 
             {/* QR Code Canvas Frame */}
-            <div className="relative p-4 bg-white rounded-3xl shadow-xl border-2 border-[#007791]/30">
+            <div className="relative p-3 sm:p-4 bg-white rounded-2xl sm:rounded-3xl shadow-xl border-2 border-[#007791]/30">
               {qrDataUrl ? (
                 <img
                   src={qrDataUrl}
                   alt="Session Attendance QR Code"
-                  className="w-56 h-56 sm:w-64 sm:h-64 rounded-xl object-contain mx-auto"
+                  className="w-48 h-48 sm:w-64 sm:h-64 rounded-xl object-contain mx-auto"
                 />
               ) : (
-                <div className="w-56 h-56 sm:w-64 sm:h-64 flex items-center justify-center bg-slate-100 rounded-xl animate-pulse">
+                <div className="w-48 h-48 sm:w-64 sm:h-64 flex items-center justify-center bg-slate-100 rounded-xl animate-pulse">
                   <RefreshCw className="w-8 h-8 text-slate-400 animate-spin" />
                 </div>
               )}
 
               {/* Dynamic countdown overlay pill */}
-              <div className="mt-3 flex items-center justify-center gap-2 text-xs font-bold text-slate-600 bg-slate-100 py-1.5 px-3 rounded-xl border border-slate-200">
+              <div className="mt-2 sm:mt-3 flex items-center justify-center gap-2 text-xs font-bold text-slate-600 bg-slate-100 py-1.5 px-3 rounded-xl border border-slate-200">
                 <Clock className="w-3.5 h-3.5 text-cyan-600" />
                 <span>Expires in:</span>
                 <span className="font-mono text-cyan-700 font-extrabold text-sm">{timeLeft}s</span>
@@ -216,10 +216,10 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
             </div>
 
             {/* 6-Digit Rotating PIN (Auditorium Fallback) */}
-            <div className="w-full max-w-sm bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
+            <div className="w-full max-w-sm bg-white p-3 sm:p-3.5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
               <div className="text-left">
                 <p className="text-[10px] uppercase font-bold text-slate-400">Back-Row Lecture PIN:</p>
-                <p className="text-2xl font-black tracking-widest font-mono text-[#007791]">
+                <p className="text-xl sm:text-2xl font-black tracking-widest font-mono text-[#007791]">
                   {currentPin.slice(0, 3)}-{currentPin.slice(3)}
                 </p>
               </div>
@@ -233,10 +233,10 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
               href={checkinUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs transition-all shadow-md shadow-cyan-900/10 cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs transition-all shadow-md shadow-cyan-900/10 cursor-pointer w-full sm:w-auto text-center"
             >
               <ExternalLink className="w-3.5 h-3.5" />
-              <span>Simulate Student Scan (Opens /checkin in new tab)</span>
+              <span>Simulate Student Scan (Opens /checkin)</span>
             </a>
           </div>
 

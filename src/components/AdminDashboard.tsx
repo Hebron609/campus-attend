@@ -237,18 +237,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
   }
 
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-12 py-8 space-y-8">
+    <div className="w-full px-3 sm:px-6 lg:px-10 xl:px-12 py-5 sm:py-8 space-y-6 sm:space-y-8">
       {/* Top Banner / Welcome */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-sky-900 via-[#007791] to-cyan-700 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-cyan-950/15 relative overflow-hidden">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-sky-900 via-[#007791] to-cyan-700 rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-white shadow-xl shadow-cyan-950/15 relative overflow-hidden">
         <div className="relative z-10">
           <div className="flex items-center gap-2 text-cyan-200 text-xs font-bold uppercase tracking-wider mb-2">
             <Shield className="w-4 h-4 text-cyan-300" />
             <span>Administrative Control Center</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
+          <h1 className="text-xl sm:text-3xl font-black tracking-tight">
             Welcome, {currentUser.name}
           </h1>
-          <p className="mt-1 text-sm text-cyan-100 max-w-xl">
+          <p className="mt-1 text-xs sm:text-sm text-cyan-100 max-w-xl">
             Manage institutional users, course assignments, student enrolments, and attendance analytics across all academic faculties.
           </p>
         </div>
@@ -256,7 +256,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white font-semibold text-xs transition-all active:scale-95 cursor-pointer backdrop-blur-xs"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/20 text-white font-semibold text-xs transition-all active:scale-95 cursor-pointer backdrop-blur-xs w-full sm:w-auto"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
             <span>Refresh Data</span>
@@ -269,9 +269,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
         <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-between gap-3 text-rose-800">
           <div className="flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-rose-600 flex-shrink-0" />
-            <span className="text-sm font-semibold">{error}</span>
+            <span className="text-xs sm:text-sm font-semibold">{error}</span>
           </div>
-          <button onClick={() => setError(null)} className="text-rose-500 hover:text-rose-700 text-sm font-bold">
+          <button onClick={() => setError(null)} className="text-rose-500 hover:text-rose-700 text-xs sm:text-sm font-bold flex-shrink-0">
             Dismiss
           </button>
         </div>
@@ -280,15 +280,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
       {successMsg && (
         <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center gap-3 text-emerald-800 animate-in fade-in">
           <CheckCircle className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-          <span className="text-sm font-semibold">{successMsg}</span>
+          <span className="text-xs sm:text-sm font-semibold">{successMsg}</span>
         </div>
       )}
 
       {/* Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-1 overflow-x-auto">
+      <div className="flex items-center gap-2 border-b border-slate-200 pb-2 overflow-x-auto -mx-3 sm:mx-0 px-3 sm:px-0">
         <button
           onClick={() => setActiveTab('overview')}
-          className={`px-4 py-2.5 rounded-xl font-bold text-sm transition-all cursor-pointer flex items-center gap-2 ${
+          className={`flex-shrink-0 whitespace-nowrap px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer flex items-center gap-2 ${
             activeTab === 'overview'
               ? 'bg-[#007791] text-white shadow-md shadow-cyan-900/20'
               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
@@ -300,7 +300,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
 
         <button
           onClick={() => setActiveTab('users')}
-          className={`px-4 py-2.5 rounded-xl font-bold text-sm transition-all cursor-pointer flex items-center gap-2 ${
+          className={`flex-shrink-0 whitespace-nowrap px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer flex items-center gap-2 ${
             activeTab === 'users'
               ? 'bg-[#007791] text-white shadow-md shadow-cyan-900/20'
               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
@@ -312,7 +312,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
 
         <button
           onClick={() => setActiveTab('courses')}
-          className={`px-4 py-2.5 rounded-xl font-bold text-sm transition-all cursor-pointer flex items-center gap-2 ${
+          className={`flex-shrink-0 whitespace-nowrap px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer flex items-center gap-2 ${
             activeTab === 'courses'
               ? 'bg-[#007791] text-white shadow-md shadow-cyan-900/20'
               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
@@ -324,7 +324,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
 
         <button
           onClick={() => setActiveTab('enrolments')}
-          className={`px-4 py-2.5 rounded-xl font-bold text-sm transition-all cursor-pointer flex items-center gap-2 ${
+          className={`flex-shrink-0 whitespace-nowrap px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all cursor-pointer flex items-center gap-2 ${
             activeTab === 'enrolments'
               ? 'bg-[#007791] text-white shadow-md shadow-cyan-900/20'
               : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
@@ -337,7 +337,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
 
       {/* TAB 1: OVERVIEW */}
       {activeTab === 'overview' && (
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
           {/* Key Metrics Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4">
@@ -505,17 +505,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
 
       {/* TAB 2: USER ACCOUNTS (FR-02) */}
       {activeTab === 'users' && (
-        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs space-y-6">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 p-4 sm:p-6 shadow-xs space-y-5 sm:space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-extrabold text-slate-900">User Accounts Management</h2>
+              <h2 className="text-base sm:text-lg font-extrabold text-slate-900">User Accounts Management</h2>
               <p className="text-xs text-slate-500">
                 Manage accounts for lecturers and students. Admins cannot deactivate their own accounts.
               </p>
             </div>
             <button
               onClick={() => setShowCreateUserModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#007791] hover:bg-cyan-800 text-white font-bold text-xs shadow-md shadow-cyan-900/20 transition-all cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#007791] hover:bg-cyan-800 text-white font-bold text-xs shadow-md shadow-cyan-900/20 transition-all cursor-pointer w-full sm:w-auto"
             >
               <UserPlus className="w-4 h-4" />
               <span>Create New Account</span>
@@ -534,12 +534,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
                 className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:ring-2 focus:ring-[#007791] focus:outline-hidden"
               />
             </div>
-            <div className="flex items-center gap-1.5 w-full sm:w-auto">
+            <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
               {(['ALL', 'LECTURER', 'STUDENT', 'ADMIN'] as const).map((r) => (
                 <button
                   key={r}
                   onClick={() => setUserRoleFilter(r)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                     userRoleFilter === r
                       ? 'bg-slate-800 text-white'
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -552,8 +552,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
           </div>
 
           {/* Users Table */}
-          <div className="overflow-x-auto rounded-2xl border border-slate-200">
-            <table className="w-full text-left text-xs">
+          <div className="overflow-x-auto rounded-2xl border border-slate-200 -mx-1 sm:mx-0">
+            <table className="w-full text-left text-xs min-w-[620px]">
               <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold">
                 <tr>
                   <th className="py-3 px-4">User</th>
@@ -712,10 +712,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
 
       {/* TAB 4: ENROLMENTS (FR-04) */}
       {activeTab === 'enrolments' && (
-        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-xs space-y-6">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 p-4 sm:p-6 shadow-xs space-y-5 sm:space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-extrabold text-slate-900">Student Course Enrolment (FR-04)</h2>
+              <h2 className="text-base sm:text-lg font-extrabold text-slate-900">Student Course Enrolment (FR-04)</h2>
               <p className="text-xs text-slate-500">
                 Select a course to view its enrolled roster and register new students.
               </p>
@@ -723,7 +723,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
             {selectedCourseForEnrol && (
               <button
                 onClick={() => setShowEnrolStudentModal(true)}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#007791] hover:bg-cyan-800 text-white font-bold text-xs shadow-md shadow-cyan-900/20 transition-all cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#007791] hover:bg-cyan-800 text-white font-bold text-xs shadow-md shadow-cyan-900/20 transition-all cursor-pointer w-full sm:w-auto"
               >
                 <UserPlus className="w-4 h-4" />
                 <span>Enrol Student in Course</span>
@@ -732,7 +732,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
           </div>
 
           {/* Select Course Dropdown */}
-          <div className="p-4 rounded-2xl bg-cyan-50/50 border border-cyan-100 flex flex-col sm:flex-row items-center gap-3">
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-cyan-50/50 border border-cyan-100 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <span className="text-xs font-bold text-slate-700 whitespace-nowrap">Choose Course:</span>
             <select
               value={selectedCourseForEnrol?.id || ''}
@@ -753,7 +753,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
 
           {selectedCourseForEnrol ? (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <h3 className="font-extrabold text-sm text-slate-900">
                   Enrolled Roster for: <span className="text-[#007791]">{selectedCourseForEnrol.name}</span>
                 </h3>
@@ -773,8 +773,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
                   </p>
                 </div>
               ) : (
-                <div className="overflow-x-auto rounded-2xl border border-slate-200">
-                  <table className="w-full text-left text-xs">
+                <div className="overflow-x-auto rounded-2xl border border-slate-200 -mx-1 sm:mx-0">
+                  <table className="w-full text-left text-xs min-w-[580px]">
                     <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold">
                       <tr>
                         <th className="py-3 px-4">Student ID</th>
@@ -821,8 +821,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
 
       {/* MODAL: CREATE USER */}
       {showCreateUserModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 max-w-md w-full shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 max-h-[90vh] overflow-y-auto my-auto">
             <h3 className="text-lg font-black text-slate-900 mb-1">Create User Account</h3>
             <p className="text-xs text-slate-500 mb-5">
               Register a new lecturer or student. Passwords must be at least 8 characters.
@@ -899,8 +899,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
 
       {/* MODAL: CREATE COURSE */}
       {showCreateCourseModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 max-w-md w-full shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 max-h-[90vh] overflow-y-auto my-auto">
             <h3 className="text-lg font-black text-slate-900 mb-1">Create Academic Course</h3>
             <p className="text-xs text-slate-500 mb-5">
               Enter the course name and assign a responsible lecturer.
@@ -958,8 +958,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
 
       {/* MODAL: ENROL STUDENT */}
       {showEnrolStudentModal && selectedCourseForEnrol && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 max-w-md w-full shadow-2xl border border-slate-100 animate-in fade-in zoom-in-95 max-h-[90vh] overflow-y-auto my-auto">
             <h3 className="text-lg font-black text-slate-900 mb-1">Enrol Student</h3>
             <p className="text-xs text-slate-500 mb-5">
               Enrolling into: <strong className="text-[#007791]">{selectedCourseForEnrol.name}</strong>
@@ -1008,8 +1008,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
 
       {/* MODAL: COURSE SUMMARY */}
       {summaryCourse && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl border border-slate-100 max-h-[85vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 max-w-xl w-full shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto my-auto">
             <div className="flex items-start justify-between mb-4">
               <div>
                 <h3 className="text-lg font-black text-slate-900">Attendance Summary</h3>

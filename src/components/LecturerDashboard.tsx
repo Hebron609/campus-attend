@@ -228,18 +228,18 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
   }
 
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-12 py-8 space-y-8">
+    <div className="w-full px-3 sm:px-6 lg:px-10 xl:px-12 py-5 sm:py-8 space-y-6 sm:space-y-8">
       {/* Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-sky-900 via-[#007791] to-cyan-700 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-cyan-950/15 relative overflow-hidden">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-sky-900 via-[#007791] to-cyan-700 rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-white shadow-xl shadow-cyan-950/15 relative overflow-hidden">
         <div className="relative z-10">
           <div className="flex items-center gap-2 text-cyan-200 text-xs font-bold uppercase tracking-wider mb-2">
             <BookOpen className="w-4 h-4 text-cyan-300" />
             <span>Faculty Attendance Management</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
+          <h1 className="text-xl sm:text-3xl font-black tracking-tight">
             Welcome, {currentUser.name}
           </h1>
-          <p className="mt-1 text-sm text-cyan-100 max-w-xl">
+          <p className="mt-1 text-xs sm:text-sm text-cyan-100 max-w-xl">
             Record dated class sessions, project dynamic attendance QR codes with facial verification, and audit student percentages.
           </p>
         </div>
@@ -250,9 +250,9 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
         <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-between gap-3 text-rose-800 animate-in fade-in">
           <div className="flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-rose-600 flex-shrink-0" />
-            <span className="text-sm font-semibold">{error}</span>
+            <span className="text-xs sm:text-sm font-semibold">{error}</span>
           </div>
-          <button onClick={() => setError(null)} className="text-rose-500 hover:text-rose-700 text-sm font-bold">
+          <button onClick={() => setError(null)} className="text-rose-500 hover:text-rose-700 text-xs sm:text-sm font-bold flex-shrink-0">
             Dismiss
           </button>
         </div>
@@ -261,13 +261,13 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
       {successMsg && (
         <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center gap-3 text-emerald-800 animate-in fade-in">
           <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-          <span className="text-sm font-semibold">{successMsg}</span>
+          <span className="text-xs sm:text-sm font-semibold">{successMsg}</span>
         </div>
       )}
 
       {/* Course Selector & Tab Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col lg:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3 w-full lg:w-auto">
+      <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 w-full lg:w-auto">
           <span className="text-xs font-bold text-slate-700 uppercase whitespace-nowrap">Selected Course:</span>
           <select
             value={selectedCourse?.id || ''}
@@ -286,10 +286,10 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex items-center gap-2 w-full lg:w-auto justify-start lg:justify-end overflow-x-auto pb-1 lg:pb-0">
+        <div className="flex items-center gap-2 w-full lg:w-auto justify-start lg:justify-end overflow-x-auto pb-2 lg:pb-0 -mx-1 sm:mx-0 px-1 sm:px-0">
           <button
             onClick={() => setActiveTab('courses')}
-            className={`px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+            className={`flex-shrink-0 px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'courses'
                 ? 'bg-[#007791] text-white shadow-md shadow-cyan-900/20'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -301,7 +301,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
 
           <button
             onClick={() => setActiveTab('record')}
-            className={`px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+            className={`flex-shrink-0 px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'record'
                 ? 'bg-[#007791] text-white shadow-md shadow-cyan-900/20'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -313,7 +313,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
 
           <button
             onClick={() => setActiveTab('history')}
-            className={`px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+            className={`flex-shrink-0 px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'history'
                 ? 'bg-[#007791] text-white shadow-md shadow-cyan-900/20'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -325,7 +325,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
 
           <button
             onClick={() => setActiveTab('summary')}
-            className={`px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+            className={`flex-shrink-0 px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'summary'
                 ? 'bg-[#007791] text-white shadow-md shadow-cyan-900/20'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -490,21 +490,21 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
 
       {/* VIEW: TAKE ATTENDANCE (FR-05 & FR-06) */}
       {activeTab === 'record' && (
-        <div className="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xs space-y-6">
+        <div className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 p-4 sm:p-8 shadow-xs space-y-5 sm:space-y-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-5">
             <div>
-              <h2 className="text-lg font-black text-slate-900">
+              <h2 className="text-base sm:text-lg font-black text-slate-900">
                 Record Class Session Attendance
               </h2>
               <p className="text-xs text-slate-500">
-                Use the new automated QR Projector mode or manually toggle statuses below.
+                Use the automated QR Projector mode or manually toggle statuses below.
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
               {/* Date Input */}
-              <div className="flex items-center gap-2">
-                <label className="text-xs font-bold text-slate-700 uppercase">Class Date:</label>
+              <div className="flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto">
+                <label className="text-xs font-bold text-slate-700 uppercase whitespace-nowrap">Class Date:</label>
                 <input
                   type="date"
                   required
@@ -519,7 +519,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
                 <button
                   type="button"
                   onClick={() => setShowQRModal(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-700 to-[#007791] hover:from-sky-800 hover:to-cyan-800 text-white font-extrabold text-xs shadow-md shadow-cyan-900/20 cursor-pointer transition-all active:scale-95"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-700 to-[#007791] hover:from-sky-800 hover:to-cyan-800 text-white font-extrabold text-xs shadow-md shadow-cyan-900/20 cursor-pointer transition-all active:scale-95 w-full sm:w-auto"
                 >
                   <QrCode className="w-4 h-4 text-cyan-200" />
                   <span>Launch Live QR Projector</span>
@@ -541,10 +541,10 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
           ) : (
             <form onSubmit={handleSubmitAttendance} className="space-y-6">
               {/* Batch Actions & Stats */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-cyan-50/60 p-4 rounded-2xl border border-cyan-100">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-cyan-50/60 p-3.5 sm:p-4 rounded-2xl border border-cyan-100">
                 <div className="flex items-center gap-2 text-xs font-semibold text-slate-700 flex-wrap">
                   <span className="w-2 h-2 rounded-full bg-cyan-600"></span>
-                  <span>Enrolled: <strong>{roster.length} students</strong></span>
+                  <span>Enrolled: <strong>{roster.length}</strong></span>
                   <span className="text-slate-300">•</span>
                   <span>
                     Present:{' '}
@@ -568,25 +568,25 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="grid grid-cols-3 gap-1.5 w-full sm:w-auto sm:flex sm:items-center sm:gap-2">
                   <button
                     type="button"
                     onClick={() => handleMarkAll('present')}
-                    className="px-3 py-1.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-bold transition-all cursor-pointer"
+                    className="px-2 sm:px-3 py-1.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-[11px] sm:text-xs font-bold transition-all cursor-pointer text-center"
                   >
-                    Mark All Present
+                    All Present
                   </button>
                   <button
                     type="button"
                     onClick={() => handleMarkAll('absent')}
-                    className="px-3 py-1.5 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-800 text-xs font-bold transition-all cursor-pointer"
+                    className="px-2 sm:px-3 py-1.5 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-800 text-[11px] sm:text-xs font-bold transition-all cursor-pointer text-center"
                   >
-                    Mark All Absent
+                    All Absent
                   </button>
                   <button
                     type="button"
                     onClick={() => setAttendanceMap({})}
-                    className="px-3 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition-all cursor-pointer"
+                    className="px-2 sm:px-3 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 text-[11px] sm:text-xs font-bold transition-all cursor-pointer text-center"
                   >
                     Clear Marks
                   </button>
@@ -594,8 +594,8 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
               </div>
 
               {/* Roster Attendance Table */}
-              <div className="overflow-x-auto rounded-2xl border border-slate-200">
-                <table className="w-full text-left text-xs">
+              <div className="overflow-x-auto rounded-2xl border border-slate-200 -mx-1 sm:mx-0">
+                <table className="w-full text-left text-xs min-w-[620px]">
                   <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold">
                     <tr>
                       <th className="py-3.5 px-4">#</th>
@@ -678,14 +678,14 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
               </div>
 
               {/* Submit Save Button */}
-              <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4 border-t border-slate-100">
                 <p className="text-xs text-slate-500">
                   Saving will record attendance for session date <strong>{sessionDate}</strong>.
                 </p>
                 <button
                   type="submit"
                   disabled={savingAttendance}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#007791] to-cyan-600 hover:from-cyan-800 hover:to-[#007791] text-white font-extrabold text-sm shadow-md shadow-cyan-900/20 disabled:opacity-50 transition-all cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#007791] to-cyan-600 hover:from-cyan-800 hover:to-[#007791] text-white font-extrabold text-sm shadow-md shadow-cyan-900/20 disabled:opacity-50 transition-all cursor-pointer w-full sm:w-auto"
                 >
                   {savingAttendance ? (
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -809,8 +809,8 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="overflow-x-auto rounded-2xl border border-slate-200">
-                <table className="w-full text-left text-xs">
+              <div className="overflow-x-auto rounded-2xl border border-slate-200 -mx-1 sm:mx-0">
+                <table className="w-full text-left text-xs min-w-[580px]">
                   <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider font-bold">
                     <tr>
                       <th className="py-3.5 px-4">Student</th>
