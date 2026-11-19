@@ -29,11 +29,11 @@ export const AITLogo: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'md' }
       </div>
       <div>
         <div className={`font-black tracking-tight text-slate-900 flex items-center gap-1.5 ${s.text}`}>
-          <span className="text-[#007791]">AIT</span>
-          <span className="text-slate-800 font-bold">ATTENDANCE</span>
+          <span className="text-[#007791]">CAMPUS</span>
+          <span className="text-slate-800 font-bold">ATTEND</span>
         </div>
         <p className={`font-medium text-slate-500 uppercase tracking-wider ${s.sub}`}>
-          Accra Institute of Technology
+          Student Attendance Management System
         </p>
       </div>
     </div>

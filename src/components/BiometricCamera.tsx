@@ -268,9 +268,9 @@ export const BiometricCamera: React.FC<BiometricCameraProps> = ({
         )}
       </div>
 
-      {/* AIT Assurance Footer */}
+      {/* Assurance Footer */}
       <p className="text-center text-[10px] text-slate-400">
-        🔒 AIT Biometric Protocol • Zero image sharing • Biometric vector verified locally
+        🔒 Biometric Identity Protocol • Zero image sharing • Biometric vector verified locally
       </p>
 
       {/* Inline animation keyframes for scan line */}

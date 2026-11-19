@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AIT Attendance Management System | Accra Institute of Technology",
+  title: "Student Attendance Management System | Academic Portal",
   description: "CS403 Student Attendance Management System for Administrators, Lecturers, and Students.",
 };
 

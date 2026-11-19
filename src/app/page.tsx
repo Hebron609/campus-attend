@@ -47,7 +47,7 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-3">
         <div className="w-12 h-12 border-4 border-[#007791] border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm font-bold text-slate-700">Connecting to AIT Attendance System...</p>
+        <p className="text-sm font-bold text-slate-700">Connecting to Attendance Management System...</p>
       </div>
     );
   }
@@ -72,7 +72,7 @@ export default function Home() {
         <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <div>
             <p className="font-bold text-slate-800">
-              Accra Institute of Technology (AIT) — Student Attendance Management System
+              Student Attendance Management System — Academic Portal
             </p>
             <p className="text-[11px] text-slate-400">
               CS403 Capstone Project • Role-Based Academic Management

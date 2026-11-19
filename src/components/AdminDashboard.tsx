@@ -496,7 +496,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
               </div>
 
               <div className="mt-6 pt-4 border-t border-slate-100 text-[11px] text-slate-400">
-                AIT Attendance System • Role-Based Policy Enforced (NFR-01)
+                Student Attendance System • Role-Based Policy Enforced (NFR-01)
               </div>
             </div>
           </div>

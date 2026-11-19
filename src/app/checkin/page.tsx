@@ -173,7 +173,7 @@ function CheckinContent() {
           Student Self Check-In
         </h1>
         <p className="text-xs text-slate-600 font-medium">
-          Accra Institute of Technology • Biometric Attendance Verification
+          Student Attendance Management System • Biometric Verification
         </p>
       </div>
 
@@ -325,7 +325,7 @@ function CheckinContent() {
                 Attendance Recorded!
               </h2>
               <p className="text-xs text-slate-500 mt-1">
-                Your presence has been verified and securely locked into the AIT Attendance Registry.
+                Your presence has been verified and securely locked into the Attendance Registry.
               </p>
             </div>
 
@@ -394,7 +394,7 @@ function CheckinContent() {
 
       {/* Footer */}
       <footer className="text-center text-[11px] text-slate-400 mt-6 relative z-10">
-        Accra Institute of Technology (AIT) • CS403 Capstone QA & Systems
+        Student Attendance Management System • CS403 Capstone QA & Systems
       </footer>
     </div>
   );
@@ -405,7 +405,7 @@ export default function CheckinPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-600 font-bold text-sm">
-          Loading AIT Check-In System...
+          Loading Attendance Check-In System...
         </div>
       }
     >

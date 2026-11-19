@@ -231,7 +231,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ currentUser 
             </p>
           </div>
           <div className="mt-4 pt-3 border-t border-current/15 text-[11px] font-bold opacity-80">
-            AIT Policy: Minimum 75% attendance required for examination entry.
+            Academic Policy: Minimum 75% attendance required for examination entry.
           </div>
         </div>
 

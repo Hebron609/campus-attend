@@ -220,7 +220,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onSuccess }) => {
 
         {/* Footer info */}
         <p className="mt-6 text-center text-xs text-slate-500">
-          Accra Institute of Technology • Developed for CS403 Quality Assurance & Systems
+          Student Attendance System • Developed for CS403 Quality Assurance & Systems
         </p>
       </div>
     </div>
