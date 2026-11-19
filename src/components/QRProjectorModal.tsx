@@ -55,9 +55,18 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
     setTimeLeft(30);
 
     const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3001';
+
+    // Package minimal roster into QR URL so mobile devices do not need lecturer auth tokens to verify
+    const rosterData = roster.map((r) => ({
+      id: r.student.id,
+      name: r.student.name,
+      email: r.student.email,
+    }));
+    const rosterParam = encodeURIComponent(JSON.stringify(rosterData));
+
     const url = `${origin}/checkin?courseId=${course.id}&courseName=${encodeURIComponent(
       course.name
-    )}&date=${sessionDate}&pin=${pin}&token=${token}`;
+    )}&date=${sessionDate}&pin=${pin}&token=${token}&roster=${rosterParam}`;
 
     setCheckinUrl(url);
 
@@ -65,7 +74,7 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
       width: 320,
       margin: 2,
       color: {
-        dark: '#007791', // AIT Sea Blue
+        dark: '#007791',
         light: '#FFFFFF',
       },
     })
@@ -90,7 +99,30 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
     return () => clearInterval(interval);
   }, [course.id, sessionDate]);
 
-  // Listen for cross-tab check-in events (when student verifies in another tab/window)
+  // Poll /api/checkin every 2 seconds to pick up live student check-ins across the network
+  useEffect(() => {
+    const checkinPollInterval = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/checkin?courseId=${course.id}&date=${sessionDate}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.checkins)) {
+            data.checkins.forEach((c: { studentId: number }) => {
+              if (attendanceMap[c.studentId] !== 'present') {
+                onUpdateAttendance(c.studentId, 'present');
+              }
+            });
+          }
+        }
+      } catch {
+        // Ignore network polling hiccups
+      }
+    }, 2000);
+
+    return () => clearInterval(checkinPollInterval);
+  }, [course.id, sessionDate, attendanceMap, onUpdateAttendance]);
+
+  // Also listen for cross-tab storage events (when tested on same browser)
   useEffect(() => {
     const handleStorageEvent = (e: StorageEvent) => {
       if (e.key === 'ait_latest_checkin' && e.newValue) {
@@ -144,9 +176,9 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
           </button>
         </div>
 
-        {/* Content Body: Split into QR Code & Live Attendance Feed */}
+        {/* Content Body */}
         <div className="p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 overflow-y-auto">
-          {/* Left: Dynamic QR Code Presentation (7 cols) */}
+          {/* Left: Dynamic QR Code Presentation */}
           <div className="lg:col-span-7 flex flex-col items-center justify-center text-center space-y-5 bg-gradient-to-b from-slate-50 to-cyan-50/40 p-6 sm:p-8 rounded-3xl border border-cyan-100">
             <div>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-100/80 text-[#007791] text-xs font-extrabold uppercase tracking-wider mb-1">
@@ -157,7 +189,7 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
                 Scan with Smartphone to Check In
               </h3>
               <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                Enter your student index number and verify your face to be recorded as present.
+                Scan with your phone camera, confirm your student index, and verify your face.
               </p>
             </div>
 
@@ -208,7 +240,7 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
             </a>
           </div>
 
-          {/* Right: Live Attendance Roster Status (5 cols) */}
+          {/* Right: Live Attendance Roster Status */}
           <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
             <div>
               {/* Progress Summary Card */}

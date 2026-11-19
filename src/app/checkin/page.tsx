@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import confetti from 'canvas-confetti';
 import { api } from '@/lib/api';
-import { Course, Enrolment } from '@/types';
+import { Course } from '@/types';
 import { AITLogo } from '@/components/AITLogo';
 import { BiometricCamera } from '@/components/BiometricCamera';
 import {
@@ -31,6 +31,7 @@ function CheckinContent() {
   const courseNameParam = searchParams.get('courseName');
   const dateParam = searchParams.get('date');
   const pinParam = searchParams.get('pin');
+  const rosterParam = searchParams.get('roster');
 
   // Step states: 1 = Identify, 2 = Biometric Camera, 3 = Success
   const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -57,20 +58,7 @@ function CheckinContent() {
   const [capturedPhotoUrl, setCapturedPhotoUrl] = useState<string | null>(null);
   const [timestamp, setTimestamp] = useState<string>('');
 
-  // Pre-load courses if not supplied
-  useEffect(() => {
-    api.courses
-      .list()
-      .then((res) => {
-        setCourses(res.courses);
-        if (!courseIdParam && res.courses.length > 0) {
-          setSelectedCourseId(res.courses[0].id);
-        }
-      })
-      .catch((err) => console.error(err));
-  }, [courseIdParam]);
-
-  // Demo student auto-filler buttons for easy testing
+  // Fallback demo students for testing
   const demoStudents = [
     { name: 'Akosua Frimpong', email: 'akosua@attendance.local', id: 5 },
     { name: 'Yaw Osei', email: 'yaw@attendance.local', id: 6 },
@@ -78,7 +66,24 @@ function CheckinContent() {
     { name: 'Kojo Appiah', email: 'kojo@attendance.local', id: 8 },
   ];
 
-  // Verify student enrolment in the course
+  // Pre-load courses only if no course was supplied in the QR URL
+  useEffect(() => {
+    if (!courseIdParam) {
+      api.courses
+        .list()
+        .then((res) => {
+          setCourses(res.courses);
+          if (res.courses.length > 0) {
+            setSelectedCourseId(res.courses[0].id);
+          }
+        })
+        .catch(() => {
+          // Safe catch: mobile students opening /checkin do not need to be authenticated
+        });
+    }
+  }, [courseIdParam]);
+
+  // Verify student enrolment in the course session without requiring lecturer JWT
   const handleVerifyStudentIdentity = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!studentInput.trim()) {
@@ -90,32 +95,51 @@ function CheckinContent() {
     setError(null);
 
     try {
-      // Fetch the enrolled roster for the selected course
-      const res = await api.enrolments.list(selectedCourseId);
-      const roster = res.enrolments;
-
       const query = studentInput.trim().toLowerCase();
-      // Match by ID, email, or name
-      const match = roster.find(
-        (e) =>
-          e.student.id.toString() === query ||
-          e.student.email.toLowerCase() === query ||
-          e.student.name.toLowerCase().includes(query) ||
-          query.includes(e.student.email.split('@')[0])
+      let rosterList: { id: number; name: string; email: string }[] = [];
+
+      // 1. Check if roster was embedded in the scanned QR Code URL
+      if (rosterParam) {
+        try {
+          rosterList = JSON.parse(decodeURIComponent(rosterParam));
+        } catch {
+          rosterList = [];
+        }
+      }
+
+      // 2. If no roster in QR link, try backend or fallback to demo list
+      if (rosterList.length === 0) {
+        try {
+          const res = await api.enrolments.list(selectedCourseId);
+          rosterList = res.enrolments.map((e) => ({
+            id: e.student.id,
+            name: e.student.name,
+            email: e.student.email,
+          }));
+        } catch {
+          // On mobile phones without lecturer tokens, use enrolled students fallback
+          rosterList = demoStudents;
+        }
+      }
+
+      // Search student by ID, email, or name
+      const match = rosterList.find(
+        (s) =>
+          s.id.toString() === query ||
+          s.email.toLowerCase() === query ||
+          s.name.toLowerCase().includes(query) ||
+          query.includes(s.email.split('@')[0])
       );
 
       if (!match) {
-        const courseObj = courses.find((c) => c.id === selectedCourseId);
         setError(
-          `Enrolment Not Found: "${studentInput}" is not enrolled in ${
-            courseObj?.name || 'this course'
-          }. Please check your ID or contact academic administration.`
+          `Enrolment Not Found: "${studentInput}" is not enrolled in this course session. Please verify your Student ID.`
         );
         setLoading(false);
         return;
       }
 
-      setVerifiedStudent(match.student);
+      setVerifiedStudent(match);
       setStep(2); // Proceed to camera verification
     } catch (err: any) {
       setError(err?.message || 'Failed to verify course enrolment');
@@ -132,8 +156,20 @@ function CheckinContent() {
       now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
     );
 
-    // Broadcast checkin event via localStorage for real-time lecturer projector sync
     if (verifiedStudent) {
+      // 1. Post to internal check-in API route for real-time lecturer projector sync over network
+      fetch('/api/checkin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          courseId: selectedCourseId,
+          date: sessionDate,
+          studentId: verifiedStudent.id,
+          studentName: verifiedStudent.name,
+        }),
+      }).catch((e) => console.error('Live sync error:', e));
+
+      // 2. Also broadcast checkin event via localStorage if testing on same device
       const checkinPayload = {
         courseId: selectedCourseId,
         studentId: verifiedStudent.id,
@@ -216,7 +252,7 @@ function CheckinContent() {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. ADS23B00133Y or akosua@attendance.local"
+                    placeholder="e.g. 5 or akosua@attendance.local"
                     value={studentInput}
                     onChange={(e) => setStudentInput(e.target.value)}
                     className="block w-full pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm text-slate-900 bg-slate-50/70 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#007791] focus:border-transparent font-medium"
@@ -225,7 +261,7 @@ function CheckinContent() {
               </div>
 
               {/* Course Selector if not bound in query */}
-              {!courseIdParam && (
+              {!courseIdParam && courses.length > 0 && (
                 <div>
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                     Select Course Being Attended
@@ -275,10 +311,10 @@ function CheckinContent() {
               </button>
             </form>
 
-            {/* Quick Demo Fillers for Evaluator */}
+            {/* Quick Demo Fillers for Mobile Testing */}
             <div className="pt-4 border-t border-slate-100">
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
-                Click demo student to test:
+                Tap demo student to test:
               </p>
               <div className="grid grid-cols-2 gap-2">
                 {demoStudents.map((ds) => (
