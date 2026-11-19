@@ -23,7 +23,9 @@ import {
   ChevronRight,
   Info,
   QrCode,
-  Sparkles
+  Sparkles,
+  Users,
+  Play
 } from 'lucide-react';
 
 interface LecturerDashboardProps {
@@ -36,7 +38,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  // Active view tab
+  // Active view tab: defaults to 'courses' (My Courses Overview)
   const [activeTab, setActiveTab] = useState<'courses' | 'record' | 'history' | 'summary'>('courses');
 
   // Selected course for attendance recording
@@ -81,7 +83,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
     fetchCourses();
   }, []);
 
-  // When selectedCourse changes, load its roster
+  // When selectedCourse changes, load its roster, sessions and summary
   useEffect(() => {
     if (selectedCourse) {
       loadRoster(selectedCourse.id);
@@ -95,7 +97,6 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
     try {
       const res = await api.enrolments.list(courseId);
       setRoster(res.enrolments);
-      // Pre-fill initial map
       const initialMap: Record<number, 'present' | 'absent'> = {};
       res.enrolments.forEach((e) => {
         initialMap[e.student.id] = 'present';
@@ -157,7 +158,6 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
       return;
     }
 
-    // Verify roster completeness locally before submitting
     const records = roster.map((enr) => ({
       studentId: enr.student.id,
       status: attendanceMap[enr.student.id] || 'absent',
@@ -176,10 +176,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
       setSuccessMsg(`Attendance saved successfully for ${res.saved} students on ${sessionDate}!`);
       setTimeout(() => setSuccessMsg(null), 5000);
 
-      // Close QR Projector if open
       setShowQRModal(false);
-
-      // Refresh sessions and summaries
       loadSessions(selectedCourse.id);
       loadSummary(selectedCourse.id);
       fetchCourses();
@@ -208,6 +205,10 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
       setLoadingSessionDetail(false);
     }
   };
+
+  // Calculations for Overview cards
+  const totalEnrolments = courses.reduce((sum, c) => sum + (c._count?.enrolments || 0), 0);
+  const totalSessions = courses.reduce((sum, c) => sum + (c._count?.sessions || 0), 0);
 
   if (loading) {
     return (
@@ -266,10 +267,10 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
         </div>
       )}
 
-      {/* Course Selector Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <span className="text-xs font-bold text-slate-700 uppercase whitespace-nowrap">Select Course:</span>
+      {/* Course Selector & Tab Bar */}
+      <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col lg:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3 w-full lg:w-auto">
+          <span className="text-xs font-bold text-slate-700 uppercase whitespace-nowrap">Selected Course:</span>
           <select
             value={selectedCourse?.id || ''}
             onChange={(e) => {
@@ -286,10 +287,23 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
           </select>
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+        {/* Navigation Tabs */}
+        <div className="flex items-center gap-2 w-full lg:w-auto justify-start lg:justify-end overflow-x-auto pb-1 lg:pb-0">
+          <button
+            onClick={() => setActiveTab('courses')}
+            className={`px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+              activeTab === 'courses'
+                ? 'bg-[#007791] text-white shadow-md shadow-cyan-900/20'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>My Courses Overview</span>
+          </button>
+
           <button
             onClick={() => setActiveTab('record')}
-            className={`px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
+            className={`px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'record'
                 ? 'bg-[#007791] text-white shadow-md shadow-cyan-900/20'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -301,7 +315,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
 
           <button
             onClick={() => setActiveTab('history')}
-            className={`px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
+            className={`px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'history'
                 ? 'bg-[#007791] text-white shadow-md shadow-cyan-900/20'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -313,7 +327,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
 
           <button
             onClick={() => setActiveTab('summary')}
-            className={`px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
+            className={`px-3.5 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
               activeTab === 'summary'
                 ? 'bg-[#007791] text-white shadow-md shadow-cyan-900/20'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
@@ -324,6 +338,157 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
           </button>
         </div>
       </div>
+
+      {/* VIEW: MY COURSES OVERVIEW (Default Landing View) */}
+      {activeTab === 'courses' && (
+        <div className="space-y-8 animate-in fade-in">
+          {/* Metrics summary cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+              <div className="p-3.5 rounded-2xl bg-cyan-50 text-[#007791] border border-cyan-100">
+                <BookOpen className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Assigned Courses</p>
+                <p className="text-2xl font-black text-slate-900">{courses.length}</p>
+                <span className="text-[11px] text-emerald-600 font-semibold">Active Teaching Portfolio</span>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+              <div className="p-3.5 rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-100">
+                <Users className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Enrolled Students</p>
+                <p className="text-2xl font-black text-slate-900">{totalEnrolments}</p>
+                <span className="text-[11px] text-slate-500 font-medium">Across all your classes</span>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs flex items-center gap-4">
+              <div className="p-3.5 rounded-2xl bg-amber-50 text-amber-700 border border-amber-100">
+                <History className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Recorded Sessions</p>
+                <p className="text-2xl font-black text-slate-900">{totalSessions}</p>
+                <span className="text-[11px] text-slate-500 font-medium">Saved class sessions</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Assigned Courses Cards Grid */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-black text-slate-900">Your Assigned Courses</h2>
+                <p className="text-xs text-slate-500">
+                  Select an action below to take attendance, launch the live QR projector, or inspect student records.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {courses.map((course) => {
+                const isSelected = selectedCourse?.id === course.id;
+                return (
+                  <div
+                    key={course.id}
+                    className={`bg-white rounded-3xl p-6 sm:p-7 border transition-all shadow-xs flex flex-col justify-between ${
+                      isSelected
+                        ? 'border-cyan-400 ring-2 ring-[#007791]/10 shadow-md'
+                        : 'border-slate-200 hover:border-cyan-300'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-start justify-between gap-3 mb-3">
+                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-md bg-cyan-50 text-[#007791] font-mono">
+                          COURSE ID #{course.id}
+                        </span>
+                        <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                          {course.isActive ? 'Active Course' : 'Deactivated'}
+                        </span>
+                      </div>
+
+                      <h3 className="text-lg font-black text-slate-900 mb-2">{course.name}</h3>
+                      <p className="text-xs text-slate-500 mb-5">
+                        Faculty Lecturer: <strong className="text-slate-800">{currentUser.name}</strong>
+                      </p>
+
+                      <div className="grid grid-cols-2 gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-100 mb-6 text-center">
+                        <div>
+                          <p className="text-[10px] uppercase font-bold text-slate-400">Total Enrolled</p>
+                          <p className="text-lg font-black text-slate-800">{course._count?.enrolments || 0} students</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] uppercase font-bold text-slate-400">Sessions Conducted</p>
+                          <p className="text-lg font-black text-slate-800">{course._count?.sessions || 0} sessions</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action buttons on each card */}
+                    <div className="space-y-2 pt-3 border-t border-slate-100">
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedCourse(course);
+                            setActiveTab('record');
+                          }}
+                          className="py-2.5 px-3 rounded-xl bg-[#007791] hover:bg-cyan-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                        >
+                          <Calendar className="w-3.5 h-3.5" />
+                          <span>Take Attendance</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedCourse(course);
+                            setShowQRModal(true);
+                          }}
+                          className="py-2.5 px-3 rounded-xl bg-gradient-to-r from-sky-700 to-[#007791] hover:from-sky-800 hover:to-cyan-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                        >
+                          <QrCode className="w-3.5 h-3.5 text-cyan-200" />
+                          <span>Launch QR</span>
+                        </button>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedCourse(course);
+                            setActiveTab('history');
+                          }}
+                          className="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                        >
+                          <History className="w-3.5 h-3.5" />
+                          <span>Past Sessions</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedCourse(course);
+                            setActiveTab('summary');
+                          }}
+                          className="py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                        >
+                          <Percent className="w-3.5 h-3.5" />
+                          <span>Percentages</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* VIEW: TAKE ATTENDANCE (FR-05 & FR-06) */}
       {activeTab === 'record' && (
