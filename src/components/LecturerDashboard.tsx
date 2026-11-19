@@ -97,11 +97,8 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
     try {
       const res = await api.enrolments.list(courseId);
       setRoster(res.enrolments);
-      const initialMap: Record<number, 'present' | 'absent'> = {};
-      res.enrolments.forEach((e) => {
-        initialMap[e.student.id] = 'present';
-      });
-      setAttendanceMap(initialMap);
+      // Do not pre-fill as 'present'; start as unmarked/pending
+      setAttendanceMap({});
     } catch (err: any) {
       setError(err?.message || 'Failed to load course roster');
     } finally {
@@ -158,9 +155,20 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
       return;
     }
 
+    // Activity Diagram check: Roster Complete? Every enrolled student must be explicitly marked
+    const unmarkedStudents = roster.filter((enr) => !attendanceMap[enr.student.id]);
+    if (unmarkedStudents.length > 0) {
+      setError(
+        `Roster Incomplete: ${unmarkedStudents.length} student(s) still unmarked (${unmarkedStudents
+          .map((s) => s.student.name)
+          .join(', ')}). Please mark each student or click "Mark All Present" / "Mark All Absent" before saving.`
+      );
+      return;
+    }
+
     const records = roster.map((enr) => ({
       studentId: enr.student.id,
-      status: attendanceMap[enr.student.id] || 'absent',
+      status: attendanceMap[enr.student.id] as 'present' | 'absent',
     }));
 
     setSavingAttendance(true);
@@ -561,6 +569,13 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
                       {Object.values(attendanceMap).filter((s) => s === 'absent').length}
                     </strong>
                   </span>
+                  <span className="text-slate-300">•</span>
+                  <span>
+                    Unmarked:{' '}
+                    <strong className="text-amber-700">
+                      {roster.filter((e) => !attendanceMap[e.student.id]).length}
+                    </strong>
+                  </span>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -577,6 +592,13 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
                     className="px-3 py-1.5 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-800 text-xs font-bold transition-all cursor-pointer"
                   >
                     Mark All Absent
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAttendanceMap({})}
+                    className="px-3 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition-all cursor-pointer"
+                  >
+                    Clear Marks
                   </button>
                 </div>
               </div>
@@ -595,7 +617,11 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {roster.map((enr, idx) => {
-                      const isPresent = attendanceMap[enr.student.id] === 'present';
+                      const currentStatus = attendanceMap[enr.student.id];
+                      const isPresent = currentStatus === 'present';
+                      const isAbsent = currentStatus === 'absent';
+                      const isUnmarked = !currentStatus;
+
                       return (
                         <tr key={enr.id} className="hover:bg-slate-50/70 transition-all">
                           <td className="py-3.5 px-4 text-slate-400 font-mono">{idx + 1}</td>
@@ -609,15 +635,21 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
                             {enr.student.email}
                           </td>
                           <td className="py-3.5 px-4 text-center">
-                            <span
-                              className={`inline-block px-3 py-1 rounded-full text-[10px] font-black tracking-wide ${
-                                isPresent
-                                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                                  : 'bg-rose-100 text-rose-800 border border-rose-200'
-                              }`}
-                            >
-                              {isPresent ? 'PRESENT' : 'ABSENT'}
-                            </span>
+                            {isPresent && (
+                              <span className="inline-block px-3 py-1 rounded-full text-[10px] font-black tracking-wide bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                PRESENT
+                              </span>
+                            )}
+                            {isAbsent && (
+                              <span className="inline-block px-3 py-1 rounded-full text-[10px] font-black tracking-wide bg-rose-100 text-rose-800 border border-rose-200">
+                                ABSENT
+                              </span>
+                            )}
+                            {isUnmarked && (
+                              <span className="inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-wide bg-slate-100 text-slate-500 border border-slate-200">
+                                UNMARKED
+                              </span>
+                            )}
                           </td>
                           <td className="py-3.5 px-4 text-right">
                             <div className="inline-flex items-center gap-1.5 p-1 rounded-xl bg-slate-100">
@@ -627,7 +659,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
                                 className={`px-3 py-1.5 rounded-lg font-bold text-xs transition-all cursor-pointer flex items-center gap-1 ${
                                   isPresent
                                     ? 'bg-emerald-600 text-white shadow-xs'
-                                    : 'text-slate-600 hover:text-emerald-700'
+                                    : 'text-slate-600 hover:text-emerald-700 hover:bg-white'
                                 }`}
                               >
                                 <Check className="w-3.5 h-3.5" />
@@ -638,9 +670,9 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
                                 type="button"
                                 onClick={() => handleToggleStudent(enr.student.id, 'absent')}
                                 className={`px-3 py-1.5 rounded-lg font-bold text-xs transition-all cursor-pointer flex items-center gap-1 ${
-                                  !isPresent
+                                  isAbsent
                                     ? 'bg-rose-600 text-white shadow-xs'
-                                    : 'text-slate-600 hover:text-rose-700'
+                                    : 'text-slate-600 hover:text-rose-700 hover:bg-white'
                                 }`}
                               >
                                 <X className="w-3.5 h-3.5" />
