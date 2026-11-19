@@ -7,6 +7,7 @@ import { api } from '@/lib/api';
 import { Course } from '@/types';
 import { AITLogo } from '@/components/AITLogo';
 import { BiometricCamera } from '@/components/BiometricCamera';
+import { formatStudentId, matchStudentQuery } from '@/lib/studentId';
 import {
   ShieldCheck,
   CheckCircle2,
@@ -122,18 +123,12 @@ function CheckinContent() {
         }
       }
 
-      // Search student by ID, email, or name
-      const match = rosterList.find(
-        (s) =>
-          s.id.toString() === query ||
-          s.email.toLowerCase() === query ||
-          s.name.toLowerCase().includes(query) ||
-          query.includes(s.email.split('@')[0])
-      );
+      // Search student by Student ID (e.g. STU-0005, ADS23B00133Y), numeric ID (#5), or institutional email
+      const match = rosterList.find((s) => matchStudentQuery(s, studentInput));
 
       if (!match) {
         setError(
-          `Enrolment Not Found: "${studentInput}" is not enrolled in this course session. Please verify your Student ID.`
+          `Enrolment Not Found: "${studentInput}" was not found in this course session roster. Please verify your Student ID (e.g. STU-0005) or institutional email.`
         );
         setLoading(false);
         return;
@@ -242,9 +237,12 @@ function CheckinContent() {
 
             <form onSubmit={handleVerifyStudentIdentity} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Student Index Number or Email
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    Student ID / University Index Number
+                  </label>
+                  <span className="text-[10px] font-semibold text-slate-400">or School Email</span>
+                </div>
                 <div className="relative rounded-xl shadow-xs">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                     <IdCard className="h-4 w-4" />
@@ -252,12 +250,15 @@ function CheckinContent() {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. 5 or akosua@attendance.local"
+                    placeholder="e.g. STU-0005, ADS23B00133Y, or 5"
                     value={studentInput}
                     onChange={(e) => setStudentInput(e.target.value)}
                     className="block w-full pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm text-slate-900 bg-slate-50/70 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#007791] focus:border-transparent font-medium"
                   />
                 </div>
+                <p className="text-[11px] text-slate-400 mt-1">
+                  Primary identifier used by lecturers to record and audit class attendance.
+                </p>
               </div>
 
               {/* Course Selector if not bound in query */}
@@ -314,18 +315,22 @@ function CheckinContent() {
             {/* Quick Demo Fillers for Mobile Testing */}
             <div className="pt-4 border-t border-slate-100">
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
-                Tap demo student to test:
+                Tap demo student ID to test:
               </p>
               <div className="grid grid-cols-2 gap-2">
                 {demoStudents.map((ds) => (
                   <button
                     key={ds.id}
                     type="button"
-                    onClick={() => setStudentInput(ds.email)}
-                    className="p-2 rounded-lg bg-slate-100 hover:bg-cyan-50 hover:text-[#007791] text-left text-xs font-bold text-slate-700 transition-all cursor-pointer"
+                    onClick={() => setStudentInput(formatStudentId(ds))}
+                    className="p-2.5 rounded-xl bg-slate-100 hover:bg-cyan-50 hover:border-cyan-300 border border-transparent text-left text-xs font-bold text-slate-700 transition-all cursor-pointer group"
                   >
-                    <p className="truncate">{ds.name}</p>
-                    <p className="text-[10px] text-slate-400 font-mono">ID #{ds.id}</p>
+                    <p className="truncate text-slate-900 group-hover:text-[#007791]">{ds.name}</p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-cyan-100/70 text-[#007791]">
+                        {formatStudentId(ds)}
+                      </span>
+                    </div>
                   </button>
                 ))}
               </div>
@@ -338,7 +343,7 @@ function CheckinContent() {
           <div className="space-y-4 animate-in fade-in zoom-in-95">
             <BiometricCamera
               studentName={verifiedStudent.name}
-              studentId={verifiedStudent.id}
+              studentId={formatStudentId(verifiedStudent)}
               onVerified={handleBiometricSuccess}
               onCancel={() => setStep(1)}
             />
@@ -367,25 +372,33 @@ function CheckinContent() {
 
             {/* Student Snapshot & Verification Card */}
             <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-left space-y-3">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3.5">
                 {capturedPhotoUrl ? (
                   <img
                     src={capturedPhotoUrl}
                     alt="Verified Selfie"
-                    className="w-14 h-14 rounded-xl object-cover border-2 border-emerald-500 shadow-xs"
+                    className="w-16 h-16 rounded-2xl object-cover border-2 border-emerald-500 shadow-xs flex-shrink-0"
                   />
                 ) : (
-                  <div className="w-14 h-14 rounded-xl bg-cyan-100 text-[#007791] flex items-center justify-center font-black">
+                  <div className="w-16 h-16 rounded-2xl bg-cyan-100 text-[#007791] flex items-center justify-center font-black flex-shrink-0">
                     {verifiedStudent.name.charAt(0)}
                   </div>
                 )}
                 <div>
-                  <p className="text-sm font-extrabold text-slate-900">{verifiedStudent.name}</p>
-                  <p className="text-xs text-slate-500 font-mono">ID: #{verifiedStudent.id}</p>
-                  <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 font-bold">
-                    <Sparkles className="w-3 h-3 text-emerald-500" />
-                    <span>Liveness & Facial Match Confirmed</span>
-                  </span>
+                  <p className="text-base font-extrabold text-slate-900 leading-tight">
+                    {verifiedStudent.name}
+                  </p>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <span className="px-2 py-0.5 rounded-md bg-[#007791] text-white font-mono font-black text-xs tracking-wide">
+                      {formatStudentId(verifiedStudent)}
+                    </span>
+                    <span className="text-[11px] text-slate-400 font-mono">
+                      #{verifiedStudent.id}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 font-mono mt-0.5">
+                    {verifiedStudent.email}
+                  </p>
                 </div>
               </div>
 

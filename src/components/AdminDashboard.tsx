@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { api, ApiError } from '@/lib/api';
 import { Course, CourseSummary, Enrolment, User, UserRole } from '@/types';
+import { formatStudentId } from '@/lib/studentId';
 import {
   Users,
   BookOpen,
@@ -566,7 +567,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
               <tbody className="divide-y divide-slate-100">
                 {filteredUsers.map((user) => (
                   <tr key={user.id} className="hover:bg-slate-50/70 transition-all">
-                    <td className="py-3.5 px-4 font-bold text-slate-900">{user.name}</td>
+                    <td className="py-3.5 px-4">
+                      <p className="font-bold text-slate-900 leading-tight">{user.name}</p>
+                      {user.role === 'STUDENT' && (
+                        <span className="inline-block px-1.5 py-0.2 rounded bg-cyan-50 border border-cyan-100 text-[#007791] font-mono font-bold text-[10px] mt-0.5">
+                          {formatStudentId(user)}
+                        </span>
+                      )}
+                    </td>
                     <td className="py-3.5 px-4 text-slate-600 font-mono text-[11px]">{user.email}</td>
                     <td className="py-3.5 px-4">
                       <span
@@ -787,7 +795,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
                     <tbody className="divide-y divide-slate-100">
                       {enrolments.map((enr) => (
                         <tr key={enr.id} className="hover:bg-slate-50/70">
-                          <td className="py-3 px-4 font-mono font-bold text-slate-700">#{enr.student.id}</td>
+                          <td className="py-3 px-4">
+                            <span className="inline-block px-2 py-0.5 rounded-md bg-cyan-50 border border-cyan-100 text-[#007791] font-mono font-bold text-xs">
+                              {formatStudentId(enr.student)}
+                            </span>
+                            <span className="text-[10px] text-slate-400 font-mono ml-1.5">#{enr.student.id}</span>
+                          </td>
                           <td className="py-3 px-4 font-bold text-slate-900">{enr.student.name}</td>
                           <td className="py-3 px-4 text-slate-600 font-mono text-[11px]">{enr.student.email}</td>
                           <td className="py-3 px-4">

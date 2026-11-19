@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import { StudentAttendanceResponse, User } from '@/types';
+import { formatStudentId } from '@/lib/studentId';
 import {
   GraduationCap,
   Calendar,
@@ -132,6 +133,11 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ currentUser 
           <h1 className="text-xl sm:text-3xl font-black tracking-tight">
             Hello, {currentUser.name}
           </h1>
+          <div className="flex items-center gap-2 mt-1 mb-2">
+            <span className="px-2.5 py-0.5 rounded-lg bg-white/20 text-white font-mono font-bold text-xs border border-white/30 tracking-wider">
+              STUDENT ID: {formatStudentId(currentUser)}
+            </span>
+          </div>
           <p className="mt-1 text-xs sm:text-sm text-cyan-100 max-w-xl">
             Track your personal attendance records, review course percentages, and ensure you meet academic exam eligibility criteria.
           </p>

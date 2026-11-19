@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
 import { Course, Enrolment } from '@/types';
+import { formatStudentId } from '@/lib/studentId';
 import {
   X,
   RefreshCw,
@@ -61,6 +62,7 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
       id: r.student.id,
       name: r.student.name,
       email: r.student.email,
+      studentId: formatStudentId(r.student),
     }));
     const rosterParam = encodeURIComponent(JSON.stringify(rosterData));
 
@@ -300,8 +302,13 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
                             {isPresent ? <Check className="w-3.5 h-3.5" /> : enr.student.name.charAt(0)}
                           </div>
                           <div>
-                            <p className="text-xs font-bold leading-tight">{enr.student.name}</p>
-                            <p className="text-[10px] text-slate-400 font-mono">ID #{enr.student.id}</p>
+                            <p className="text-xs font-bold leading-tight text-slate-900">{enr.student.name}</p>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-cyan-50 border border-cyan-100 text-[#007791]">
+                                {formatStudentId(enr.student)}
+                              </span>
+                              <span className="text-[10px] text-slate-400 font-mono">#{enr.student.id}</span>
+                            </div>
                           </div>
                         </div>
 

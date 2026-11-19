@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { api, ApiError } from '@/lib/api';
 import { Course, CourseSummary, Enrolment, ClassSession, User } from '@/types';
 import { QRProjectorModal } from './QRProjectorModal';
+import { formatStudentId } from '@/lib/studentId';
 import {
   BookOpen,
   Calendar,
@@ -600,7 +601,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
                     <tr>
                       <th className="py-3.5 px-4">#</th>
                       <th className="py-3.5 px-4">Student Name</th>
-                      <th className="py-3.5 px-4">Student Email</th>
+                      <th className="py-3.5 px-4">Student ID / Index</th>
                       <th className="py-3.5 px-4 text-center">Status</th>
                       <th className="py-3.5 px-4 text-right">Attendance Action</th>
                     </tr>
@@ -621,8 +622,15 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
                             </div>
                             <span>{enr.student.name}</span>
                           </td>
-                          <td className="py-3.5 px-4 text-slate-600 font-mono text-[11px]">
-                            {enr.student.email}
+                          <td className="py-3.5 px-4">
+                            <div className="flex flex-col">
+                              <span className="inline-block px-2.5 py-0.5 rounded-md bg-cyan-50 border border-cyan-100 text-[#007791] font-mono font-bold text-xs w-fit">
+                                {formatStudentId(enr.student)}
+                              </span>
+                              <span className="text-[10px] text-slate-400 font-mono mt-0.5">
+                                {enr.student.email}
+                              </span>
+                            </div>
                           </td>
                           <td className="py-3.5 px-4 text-center">
                             {isPresent && (
@@ -828,7 +836,12 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
                         <tr key={st.studentId} className="hover:bg-slate-50/70">
                           <td className="py-3.5 px-4">
                             <p className="font-bold text-slate-900">{st.name}</p>
-                            <span className="text-[10px] text-slate-400 font-mono">ID #{st.studentId}</span>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-cyan-50 border border-cyan-100 text-[#007791]">
+                                {formatStudentId({ id: st.studentId })}
+                              </span>
+                              <span className="text-[10px] text-slate-400 font-mono">#{st.studentId}</span>
+                            </div>
                           </td>
                           <td className="py-3.5 px-4 font-bold text-slate-700">{st.present}</td>
                           <td className="py-3.5 px-4 font-bold text-slate-700">{st.total}</td>
@@ -907,7 +920,12 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
                   <div key={rec.id} className="p-3.5 flex items-center justify-between gap-3">
                     <div>
                       <p className="text-xs font-bold text-slate-900">{rec.student.name}</p>
-                      <p className="text-[11px] text-slate-400 font-mono">{rec.student.email}</p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-cyan-50 border border-cyan-100 text-[#007791]">
+                          {formatStudentId(rec.student)}
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-mono">{rec.student.email}</span>
+                      </div>
                     </div>
                     <span
                       className={`text-[10px] font-black px-2.5 py-1 rounded-full ${
