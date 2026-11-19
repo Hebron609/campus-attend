@@ -243,16 +243,6 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
             Record dated class sessions, project dynamic attendance QR codes with facial verification, and audit student percentages.
           </p>
         </div>
-
-        {selectedCourse && (
-          <div className="relative z-10 bg-white/10 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/20 flex items-center gap-3">
-            <div className="text-right">
-              <p className="text-[10px] text-cyan-200 uppercase font-bold tracking-wider">Active Course</p>
-              <p className="text-sm font-extrabold text-white">{selectedCourse.name}</p>
-            </div>
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
-          </div>
-        )}
       </div>
 
       {/* Notifications */}
