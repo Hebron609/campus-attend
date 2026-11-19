@@ -237,7 +237,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-12 py-8 space-y-8">
       {/* Top Banner / Welcome */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-sky-900 via-[#007791] to-cyan-700 rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-cyan-950/15 relative overflow-hidden">
         <div className="relative z-10">

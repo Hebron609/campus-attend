@@ -77,8 +77,8 @@ export default function Home() {
       <Navbar user={currentUser} onLogout={handleLogout} />
 
       {/* Floating Demo Role Switcher Toolbar for Presentation / Evaluation */}
-      <aside aria-label="Demo accounts toolbar" className="bg-slate-900 text-white text-xs border-b border-slate-800 px-4 py-2">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <aside aria-label="Demo accounts toolbar" className="bg-slate-900 text-white text-xs border-b border-slate-800 px-4 sm:px-6 lg:px-10 xl:px-12 py-2 w-full">
+        <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
             <span className="font-extrabold text-cyan-300 uppercase tracking-wider text-[10px]">
@@ -178,8 +178,8 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-auto border-t border-slate-200 bg-white py-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <footer className="mt-auto border-t border-slate-200 bg-white py-6 w-full">
+        <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <div>
             <p className="font-bold text-slate-800">
               Accra Institute of Technology (AIT) — Student Attendance Management System

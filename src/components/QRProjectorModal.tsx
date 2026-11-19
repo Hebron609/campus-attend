@@ -114,8 +114,8 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
   const percentPresent = totalStudents > 0 ? Math.round((presentCount / totalStudents) * 100) : 0;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-      <div className="bg-white rounded-3xl max-w-5xl w-full shadow-2xl border border-white/20 overflow-hidden animate-in fade-in zoom-in-95 flex flex-col my-auto max-h-[92vh]">
+    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto w-full">
+      <div className="bg-white rounded-3xl w-full max-w-[94vw] xl:max-w-7xl shadow-2xl border border-white/20 overflow-hidden animate-in fade-in zoom-in-95 flex flex-col my-auto max-h-[92vh]">
         {/* Projector Top Header */}
         <div className="bg-gradient-to-r from-sky-950 via-[#007791] to-cyan-700 px-6 sm:px-8 py-5 text-white flex items-center justify-between">
           <div className="flex items-center gap-3">

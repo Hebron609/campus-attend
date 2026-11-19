@@ -40,8 +40,8 @@ export const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
   const badge = getRoleBadge();
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs w-full">
+      <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-12">
         <div className="flex items-center justify-between h-16 sm:h-20">
           <div className="flex items-center gap-6">
             <AITLogo size="md" />
