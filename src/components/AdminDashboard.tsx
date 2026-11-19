@@ -45,11 +45,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
   const [showCreateUserModal, setShowCreateUserModal] = useState(false);
   const [newUserData, setNewUserData] = useState<{
     name: string;
+    studentId: string;
     email: string;
     password: string;
     role: 'LECTURER' | 'STUDENT';
   }>({
     name: '',
+    studentId: '',
     email: '',
     password: 'password123',
     role: 'STUDENT',
@@ -110,16 +112,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
   // Create User Handler
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newUserData.name || !newUserData.email || !newUserData.password) return;
+    const finalEmail =
+      newUserData.email.trim() ||
+      (newUserData.studentId ? `${newUserData.studentId.trim().toLowerCase()}@attendance.local` : '');
+
+    if (!newUserData.name || !finalEmail || !newUserData.password) {
+      setError('Please provide user name, Student ID or email, and password');
+      return;
+    }
+
     try {
       await api.users.create({
         name: newUserData.name.trim(),
-        email: newUserData.email.trim().toLowerCase(),
+        email: finalEmail.toLowerCase(),
         password: newUserData.password,
         role: newUserData.role,
       });
       setShowCreateUserModal(false);
-      setNewUserData({ name: '', email: '', password: 'password123', role: 'STUDENT' });
+      setNewUserData({ name: '', studentId: '', email: '', password: 'password123', role: 'STUDENT' });
       showNotification(`Successfully created account for ${newUserData.name}`);
       fetchData();
     } catch (err: any) {
@@ -843,42 +853,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
 
             <form onSubmit={handleCreateUser} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Full Name</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Kwame Mensah"
-                  value={newUserData.name}
-                  onChange={(e) => setNewUserData({ ...newUserData, name: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-[#007791] focus:outline-hidden"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Email Address</label>
-                <input
-                  type="email"
-                  required
-                  placeholder="e.g. kmensah@attendance.local"
-                  value={newUserData.email}
-                  onChange={(e) => setNewUserData({ ...newUserData, email: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-[#007791] focus:outline-hidden"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Password</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Min 8 characters"
-                  value={newUserData.password}
-                  onChange={(e) => setNewUserData({ ...newUserData, password: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-[#007791] focus:outline-hidden"
-                />
-              </div>
-
-              <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Assigned Role</label>
                 <select
                   value={newUserData.role}
@@ -888,6 +862,71 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
                   <option value="STUDENT">Student</option>
                   <option value="LECTURER">Lecturer</option>
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Full Name</label>
+                <input
+                  type="text"
+                  required
+                  placeholder={newUserData.role === 'STUDENT' ? 'e.g. Ibrahim Alhassan' : 'e.g. Dr. Kwame Mensah'}
+                  value={newUserData.name}
+                  onChange={(e) => setNewUserData({ ...newUserData, name: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-[#007791] focus:outline-hidden"
+                />
+              </div>
+
+              {newUserData.role === 'STUDENT' ? (
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-bold text-slate-700 uppercase">
+                      Student ID / University Index No.
+                    </label>
+                    <span className="text-[10px] text-slate-400 font-mono">Used for login & verification</span>
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. ADS23B00133Y or STU0005"
+                    value={newUserData.studentId}
+                    onChange={(e) => {
+                      const idVal = e.target.value;
+                      setNewUserData({
+                        ...newUserData,
+                        studentId: idVal,
+                        email: idVal ? `${idVal.trim().toLowerCase()}@attendance.local` : '',
+                      });
+                    }}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-mono font-bold text-slate-800 focus:ring-2 focus:ring-[#007791] focus:outline-hidden uppercase"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    The student will log in directly using this Student ID and their password.
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Faculty Email Address</label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="e.g. kmensah@attendance.local"
+                    value={newUserData.email}
+                    onChange={(e) => setNewUserData({ ...newUserData, email: e.target.value })}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-[#007791] focus:outline-hidden"
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Password</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Min 8 characters (default: password123)"
+                  value={newUserData.password}
+                  onChange={(e) => setNewUserData({ ...newUserData, password: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-[#007791] focus:outline-hidden"
+                />
               </div>
 
               <div className="flex items-center gap-3 pt-3">

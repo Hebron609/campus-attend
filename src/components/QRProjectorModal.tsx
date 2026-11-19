@@ -72,6 +72,20 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
 
     setCheckinUrl(url);
 
+    // Register active session PIN so students sitting too far to scan can simply enter the 6-digit PIN on /checkin
+    fetch('/api/checkin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'register_session',
+        pin,
+        courseId: course.id,
+        courseName: course.name,
+        sessionDate,
+        roster: rosterData,
+      }),
+    }).catch(() => {});
+
     QRCode.toDataURL(url, {
       width: 320,
       margin: 2,
@@ -217,17 +231,26 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
               </div>
             </div>
 
-            {/* 6-Digit Rotating PIN (Auditorium Fallback) */}
-            <div className="w-full max-w-sm bg-white p-3 sm:p-3.5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
-              <div className="text-left">
-                <p className="text-[10px] uppercase font-bold text-slate-400">Back-Row Lecture PIN:</p>
-                <p className="text-xl sm:text-2xl font-black tracking-widest font-mono text-[#007791]">
-                  {currentPin.slice(0, 3)}-{currentPin.slice(3)}
+            {/* 6-Digit Rotating PIN & Auditorium Fallback */}
+            <div className="w-full max-w-sm bg-white p-3.5 sm:p-4 rounded-2xl border-2 border-cyan-200/80 shadow-md flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[10px] uppercase font-black text-cyan-800 tracking-wider">
+                    Back-Row Auditorium PIN:
+                  </p>
+                  <p className="text-2xl sm:text-3xl font-black tracking-widest font-mono text-[#007791]">
+                    {currentPin.slice(0, 3)}-{currentPin.slice(3)}
+                  </p>
+                </div>
+                <span className="text-[10px] font-bold text-[#007791] bg-cyan-50 border border-cyan-200 px-2.5 py-1 rounded-lg">
+                  Manual Code
+                </span>
+              </div>
+              <div className="pt-2 border-t border-slate-100 text-left">
+                <p className="text-[11px] text-slate-600 font-medium leading-tight">
+                  <strong className="text-slate-900">Can't scan from the back?</strong> Open <span className="font-mono font-bold text-[#007791]">/checkin</span> on your phone and enter this 6-digit PIN with your Student ID.
                 </p>
               </div>
-              <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">
-                Enter manually
-              </span>
             </div>
 
             {/* Direct Link to test student scan in new tab */}
@@ -235,7 +258,7 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
               href={checkinUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs transition-all shadow-md shadow-cyan-900/10 cursor-pointer w-full sm:w-auto text-center"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-xs transition-all shadow-md shadow-cyan-900/10 cursor-pointer w-full sm:w-auto text-center"
             >
               <ExternalLink className="w-3.5 h-3.5" />
               <span>Simulate Student Scan (Opens /checkin)</span>

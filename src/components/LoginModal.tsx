@@ -10,6 +10,38 @@ interface LoginModalProps {
   onSuccess: (user: User) => void;
 }
 
+function resolveLoginIdentifier(input: string): string {
+  const trimmed = input.trim();
+  if (trimmed.includes('@')) {
+    return trimmed.toLowerCase();
+  }
+  const clean = trimmed.toLowerCase();
+  // Map standard student IDs & aliases to backend credentials
+  if (clean === '4' || clean === 'stu-0004' || clean === 'stu0004' || clean === 'akosua') {
+    return 'akosua@attendance.local';
+  }
+  if (clean === '5' || clean === 'stu-0005' || clean === 'stu0005' || clean === 'yaw') {
+    return 'yaw@attendance.local';
+  }
+  if (clean === '6' || clean === 'stu-0006' || clean === 'stu0006' || clean === 'efua') {
+    return 'efua@attendance.local';
+  }
+  if (clean === '7' || clean === 'stu-0007' || clean === 'stu0007' || clean === 'kojo') {
+    return 'kojo@attendance.local';
+  }
+  if (clean === 'admin') {
+    return 'admin@attendance.local';
+  }
+  if (clean === 'alice') {
+    return 'alice@attendance.local';
+  }
+  if (clean === 'kwame') {
+    return 'kwame@attendance.local';
+  }
+  // For university index numbers / student IDs (e.g. ADS23B00133Y):
+  return `${clean}@attendance.local`;
+}
+
 export const LoginModal: React.FC<LoginModalProps> = ({ onSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -62,11 +94,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onSuccess }) => {
 
   const handleLogin = async (e?: React.FormEvent, customEmail?: string, customPass?: string) => {
     if (e) e.preventDefault();
-    const loginEmail = customEmail || email;
+    const rawIdentifier = customEmail || email;
     const loginPass = customPass || password;
 
-    if (!loginEmail || !loginPass) {
-      setError('Please provide both email address and password');
+    if (!rawIdentifier || !loginPass) {
+      setError('Please provide your Student ID (or email) and password');
       return;
     }
 
@@ -74,7 +106,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onSuccess }) => {
     setError(null);
 
     try {
-      const data = await api.auth.login(loginEmail.trim(), loginPass);
+      const resolvedEmail = resolveLoginIdentifier(rawIdentifier);
+      const data = await api.auth.login(resolvedEmail, loginPass);
       onSuccess(data.user);
     } catch (err: any) {
       setError(err?.data?.error || err.message || 'Login failed. Please check your credentials.');
@@ -118,19 +151,22 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onSuccess }) => {
 
           <form className="space-y-5" onSubmit={handleLogin}>
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                University Email Address
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Student ID / University Login
+                </label>
+                <span className="text-[10px] font-semibold text-slate-400">or Faculty Email</span>
+              </div>
               <div className="relative rounded-xl shadow-xs">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                   <Mail className="h-4 w-4" />
                 </div>
                 <input
-                  type="email"
+                  type="text"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="e.g. alice@attendance.local"
+                  placeholder="e.g. ADS23B00133Y or STU-0004"
                   className="block w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm text-slate-900 bg-slate-50/70 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#007791] focus:border-transparent transition-all"
                 />
               </div>

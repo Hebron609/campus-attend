@@ -96,11 +96,30 @@ function CheckinContent() {
     setError(null);
 
     try {
-      const query = studentInput.trim().toLowerCase();
       let rosterList: { id: number; name: string; email: string }[] = [];
 
-      // 1. Check if roster was embedded in the scanned QR Code URL
-      if (rosterParam) {
+      // 1. If 6-digit PIN entered (e.g. by back-row students), fetch active course session & roster dynamically
+      const cleanPin = pinInput.replace(/\D/g, '');
+      if (cleanPin.length === 6) {
+        try {
+          const pinRes = await fetch(`/api/checkin?pin=${cleanPin}`);
+          if (pinRes.ok) {
+            const pinData = await pinRes.json();
+            if (pinData.active && pinData.session) {
+              setSelectedCourseId(pinData.session.courseId);
+              setSessionDate(pinData.session.sessionDate);
+              if (Array.isArray(pinData.session.roster) && pinData.session.roster.length > 0) {
+                rosterList = pinData.session.roster;
+              }
+            }
+          }
+        } catch {
+          // continue fallback
+        }
+      }
+
+      // 2. Check if roster was embedded in the scanned QR Code URL
+      if (rosterList.length === 0 && rosterParam) {
         try {
           rosterList = JSON.parse(decodeURIComponent(rosterParam));
         } catch {
@@ -108,7 +127,7 @@ function CheckinContent() {
         }
       }
 
-      // 2. If no roster in QR link, try backend or fallback to demo list
+      // 3. If no roster yet, try backend or fallback to enrolled list
       if (rosterList.length === 0) {
         try {
           const res = await api.enrolments.list(selectedCourseId);
@@ -128,7 +147,7 @@ function CheckinContent() {
 
       if (!match) {
         setError(
-          `Enrolment Not Found: "${studentInput}" was not found in this course session roster. Please verify your Student ID (e.g. STU-0005) or institutional email.`
+          `Enrolment Not Found: "${studentInput}" was not found in this course session roster. Please verify your Student ID (e.g. STU-0005) or ensure the 6-Digit PIN is correct.`
         );
         setLoading(false);
         return;
