@@ -60,8 +60,8 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-slate-50 w-full">
       <Navbar user={currentUser} onLogout={handleLogout} />
 
-      {/* Main Strict Role-Based Portal */}
-      <main className="flex-1 w-full">
+      {/* Main Strict Role-Based Portal with padding for fixed header */}
+      <main className="flex-1 w-full pt-16 sm:pt-20">
         {currentUser.role === 'ADMIN' && <AdminDashboard currentUser={currentUser} />}
         {currentUser.role === 'LECTURER' && <LecturerDashboard currentUser={currentUser} />}
         {currentUser.role === 'STUDENT' && <StudentDashboard currentUser={currentUser} />}
