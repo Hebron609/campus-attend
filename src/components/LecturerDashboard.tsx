@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { api, ApiError } from '@/lib/api';
 import { Course, CourseSummary, Enrolment, ClassSession, User } from '@/types';
 import { QRProjectorModal } from './QRProjectorModal';
-import { formatStudentId } from '@/lib/studentId';
+import { formatStudentId, isRealStudent } from '@/lib/studentId';
 import {
   BookOpen,
   Calendar,
@@ -97,7 +97,8 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
     setLoadingRoster(true);
     try {
       const res = await api.enrolments.list(courseId);
-      setRoster(res.enrolments);
+      const activeRoster = res.enrolments.filter((e) => isRealStudent(e.student));
+      setRoster(activeRoster);
       // Do not pre-fill as 'present'; start as unmarked/pending
       setAttendanceMap({});
     } catch (err: any) {

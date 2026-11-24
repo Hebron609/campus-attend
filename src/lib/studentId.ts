@@ -58,3 +58,43 @@ export function matchStudentQuery(
     student.name.toLowerCase().includes(q)
   );
 }
+
+/**
+ * Validates whether a student record belongs to the active institutional roster
+ * and has a genuine Student ID (filters out legacy test/dummy data accounts).
+ */
+export function isRealStudent(student?: {
+  id?: number;
+  name?: string;
+  email?: string;
+  isActive?: boolean;
+}): boolean {
+  if (!student) return false;
+  if (student.isActive === false) return false;
+
+  const email = (student.email || '').toLowerCase();
+  if (email.endsWith('@attendance.local') || email === 'hebronblay@gmail.com') {
+    return false;
+  }
+
+  // Explicit dummy student IDs
+  if (student.id !== undefined) {
+    const dummyIds = new Set([2, 3, 4, 5, 6, 7, 8, 12]);
+    if (dummyIds.has(student.id)) {
+      return false;
+    }
+    if (KNOWN_STUDENT_IDS[String(student.id)]) {
+      return true;
+    }
+  }
+
+  // Check valid institutional index pattern (e.g. ADS23B00133Y or BSCS16BIT0030Y)
+  if (email) {
+    const username = email.split('@')[0];
+    if (/^[A-Za-z]{2,}\d+[A-Za-z0-9]*$/.test(username)) {
+      return true;
+    }
+  }
+
+  return false;
+}

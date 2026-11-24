@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { api, ApiError } from '@/lib/api';
 import { Course, CourseSummary, Enrolment, User, UserRole } from '@/types';
-import { formatStudentId } from '@/lib/studentId';
+import { formatStudentId, isRealStudent } from '@/lib/studentId';
 import {
   Users,
   BookOpen,
@@ -189,7 +189,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
     setLoadingEnrolments(true);
     try {
       const res = await api.enrolments.list(course.id);
-      setEnrolments(res.enrolments);
+      const realEnrolments = res.enrolments.filter((e) => isRealStudent(e.student));
+      setEnrolments(realEnrolments);
     } catch (err: any) {
       setError(err?.message || 'Failed to load course enrolments');
     } finally {
@@ -227,10 +228,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
     }
   };
 
-  const lecturers = users.filter((u) => u.role === 'LECTURER');
-  const students = users.filter((u) => u.role === 'STUDENT');
+  const lecturers = users.filter((u) => u.role === 'LECTURER' && u.isActive !== false && !u.email.endsWith('@attendance.local'));
+  const students = users.filter((u) => u.role === 'STUDENT' && isRealStudent(u));
 
-  const filteredUsers = users.filter((u) => {
+  const activeRosterUsers = users.filter((u) =>
+    u.role === 'STUDENT' ? isRealStudent(u) : u.isActive !== false && !u.email.endsWith('@attendance.local')
+  );
+
+  const filteredUsers = activeRosterUsers.filter((u) => {
     const matchesRole = userRoleFilter === 'ALL' || u.role === userRoleFilter;
     const matchesSearch =
       u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

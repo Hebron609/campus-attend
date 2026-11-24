@@ -7,7 +7,7 @@ import { api } from '@/lib/api';
 import { Course } from '@/types';
 import { AITLogo } from '@/components/AITLogo';
 import { BiometricCamera } from '@/components/BiometricCamera';
-import { formatStudentId, matchStudentQuery } from '@/lib/studentId';
+import { formatStudentId, matchStudentQuery, isRealStudent } from '@/lib/studentId';
 import {
   ShieldCheck,
   CheckCircle2,
@@ -176,14 +176,18 @@ function CheckinContent() {
       if (rosterList.length === 0) {
         try {
           const res = await api.enrolments.list(selectedCourseId);
-          rosterList = res.enrolments.map((e) => ({
-            id: e.student.id,
-            name: e.student.name,
-            email: e.student.email,
-          }));
+          rosterList = res.enrolments
+            .filter((e) => isRealStudent(e.student))
+            .map((e) => ({
+              id: e.student.id,
+              name: e.student.name,
+              email: e.student.email,
+            }));
         } catch {
           rosterList = demoStudents;
         }
+      } else {
+        rosterList = rosterList.filter((s) => isRealStudent(s));
       }
 
       // Search student by Student ID (e.g. ADS23B00133Y), numeric ID (#5), or institutional email

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
 import { Course, Enrolment } from '@/types';
-import { formatStudentId } from '@/lib/studentId';
+import { formatStudentId, isRealStudent } from '@/lib/studentId';
 import {
   X,
   RefreshCw,
@@ -58,7 +58,8 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
     const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3001';
 
     // Package minimal roster into QR URL so mobile devices do not need lecturer auth tokens to verify
-    const rosterData = roster.map((r) => ({
+    const realRoster = roster.filter((r) => isRealStudent(r.student));
+    const rosterData = realRoster.map((r) => ({
       id: r.student.id,
       name: r.student.name,
       email: r.student.email,
