@@ -808,7 +808,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
 
           {loadingSummary ? (
             <div className="py-12 text-center text-slate-400 text-xs">Loading course summary...</div>
-          ) : !courseSummary || courseSummary.students.length === 0 ? (
+          ) : !courseSummary || courseSummary.students.filter((st) => isRealStudent({ id: st.studentId, name: st.name })).length === 0 ? (
             <div className="py-16 text-center border-2 border-dashed border-slate-200 rounded-3xl">
               <Percent className="w-10 h-10 text-slate-300 mx-auto mb-2" />
               <p className="text-sm font-bold text-slate-700">No attendance data to calculate</p>
@@ -830,7 +830,9 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {courseSummary.students.map((st) => {
+                    {courseSummary.students
+                      .filter((st) => isRealStudent({ id: st.studentId, name: st.name }))
+                      .map((st) => {
                       const pct = st.percentage;
                       const isLow = pct !== null && pct < 75;
                       return (

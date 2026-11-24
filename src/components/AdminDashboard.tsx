@@ -85,7 +85,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
         api.users.list(),
         api.courses.list(),
       ]);
-      setUsers(usersRes.users);
+      const validUsers = usersRes.users.filter((u) =>
+        u.role === 'STUDENT'
+          ? isRealStudent(u)
+          : u.isActive !== false && !u.email.endsWith('@attendance.local')
+      );
+      setUsers(validUsers);
       setCourses(coursesRes.courses);
     } catch (err: any) {
       setError(err?.message || 'Failed to load administrative data');
@@ -323,7 +328,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
           }`}
         >
           <Users className="w-4 h-4" />
-          <span>User Accounts ({users.length})</span>
+          <span>User Accounts ({students.length})</span>
         </button>
 
         <button
@@ -1084,17 +1089,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
 
             {loadingSummary ? (
               <div className="py-8 text-center text-xs text-slate-400">Loading attendance summary...</div>
-            ) : !courseSummary || courseSummary.students.length === 0 ? (
+            ) : !courseSummary || courseSummary.students.filter((st) => isRealStudent({ id: st.studentId, name: st.name })).length === 0 ? (
               <div className="py-8 text-center text-xs text-slate-500">
                 No attendance sessions recorded yet for this course.
               </div>
             ) : (
               <div className="space-y-3">
                 <div className="divide-y divide-slate-100 rounded-2xl border border-slate-200">
-                  {courseSummary.students.map((st) => (
+                  {courseSummary.students
+                    .filter((st) => isRealStudent({ id: st.studentId, name: st.name }))
+                    .map((st) => (
                     <div key={st.studentId} className="p-3.5 flex items-center justify-between gap-3">
                       <div>
-                        <p className="text-xs font-bold text-slate-800">{st.name}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-xs font-bold text-slate-800">{st.name}</p>
+                          <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-cyan-100/70 text-[#007791]">
+                            {formatStudentId({ id: st.studentId })}
+                          </span>
+                        </div>
                         <p className="text-[11px] text-slate-500">
                           Attended {st.present} of {st.total} sessions
                         </p>
