@@ -59,12 +59,15 @@ function CheckinContent() {
   const [capturedPhotoUrl, setCapturedPhotoUrl] = useState<string | null>(null);
   const [timestamp, setTimestamp] = useState<string>('');
 
-  // Fallback demo students for testing
+  // Real students roster
   const demoStudents = [
-    { name: 'Akosua Frimpong', email: 'akosua@attendance.local', id: 5 },
-    { name: 'Yaw Osei', email: 'yaw@attendance.local', id: 6 },
-    { name: 'Efua Mensah', email: 'efua@attendance.local', id: 7 },
-    { name: 'Kojo Appiah', email: 'kojo@attendance.local', id: 8 },
+    { name: 'IBRAHIM ALHASSAN', email: 'ads23b00133y@campusattend.com', id: 20 },
+    { name: 'DEREK NHYIRA YANKYERAH', email: 'ads23b00113y@campusattend.com', id: 19 },
+    { name: 'EUGENE NARH AYIKU', email: 'ads23b00245y@campusattend.com', id: 14 },
+    { name: 'JEBUNI MOHAMMED JAMALDEEN', email: 'ads23b00188y@campusattend.com', id: 15 },
+    { name: 'SELORM AMU KOBLA', email: 'ads23b00112y@campusattend.com', id: 16 },
+    { name: 'OCEAN BLISS', email: 'bscs16bit0030y@campusattend.com', id: 17 },
+    { name: 'ISRAEL AYIKU', email: 'ads23b00249y@campusattend.com', id: 18 },
   ];
 
   // Pre-load courses only if no course was supplied in the QR URL
@@ -462,7 +465,7 @@ function CheckinContent() {
 
       {/* Footer */}
       <footer className="text-center text-[11px] text-slate-400 mt-6 relative z-10">
-        Student Attendance Management System • CS403 Capstone QA & Systems
+        Student Attendance Management System • CS403 Software Engineering Project
       </footer>
     </div>
   );

@@ -114,7 +114,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
     e.preventDefault();
     const finalEmail =
       newUserData.email.trim() ||
-      (newUserData.studentId ? `${newUserData.studentId.trim().toLowerCase()}@attendance.local` : '');
+      (newUserData.studentId ? `${newUserData.studentId.trim().toLowerCase()}@campusattend.com` : '');
 
     if (!newUserData.name || !finalEmail || !newUserData.password) {
       setError('Please provide user name, Student ID or email, and password');
@@ -894,7 +894,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
                       setNewUserData({
                         ...newUserData,
                         studentId: idVal,
-                        email: idVal ? `${idVal.trim().toLowerCase()}@attendance.local` : '',
+                        email: idVal ? `${idVal.trim().toLowerCase()}@campusattend.com` : '',
                       });
                     }}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-mono font-bold text-slate-800 focus:ring-2 focus:ring-[#007791] focus:outline-hidden uppercase"
@@ -909,7 +909,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
                   <input
                     type="email"
                     required
-                    placeholder="e.g. kmensah@attendance.local"
+                    placeholder="e.g. dr.wendy@campusattend.com"
                     value={newUserData.email}
                     onChange={(e) => setNewUserData({ ...newUserData, email: e.target.value })}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-[#007791] focus:outline-hidden"

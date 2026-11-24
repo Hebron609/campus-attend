@@ -16,18 +16,33 @@ function resolveLoginIdentifier(input: string): string {
     return trimmed.toLowerCase();
   }
   const clean = trimmed.toLowerCase();
-  // Map standard student IDs & aliases to backend credentials
-  if (clean === '4' || clean === 'stu-0004' || clean === 'stu0004' || clean === 'akosua') {
-    return 'akosua@attendance.local';
+
+  // Real student index numbers & aliases
+  if (clean === 'ads23b00245y' || clean === 'eugene') {
+    return 'ads23b00245y@campusattend.com';
   }
-  if (clean === '5' || clean === 'stu-0005' || clean === 'stu0005' || clean === 'yaw') {
-    return 'yaw@attendance.local';
+  if (clean === 'ads23b00188y' || clean === 'jebuni') {
+    return 'ads23b00188y@campusattend.com';
   }
-  if (clean === '6' || clean === 'stu-0006' || clean === 'stu0006' || clean === 'efua') {
-    return 'efua@attendance.local';
+  if (clean === 'ads23b00112y' || clean === 'selorm') {
+    return 'ads23b00112y@campusattend.com';
   }
-  if (clean === '7' || clean === 'stu-0007' || clean === 'stu0007' || clean === 'kojo') {
-    return 'kojo@attendance.local';
+  if (clean === 'bscs16bit0030y' || clean === 'ocean' || clean === 'bliss') {
+    return 'bscs16bit0030y@campusattend.com';
+  }
+  if (clean === 'ads23b00249y' || clean === 'israel') {
+    return 'ads23b00249y@campusattend.com';
+  }
+  if (clean === 'ads23b00113y' || clean === 'derek') {
+    return 'ads23b00113y@campusattend.com';
+  }
+  if (clean === 'ads23b00133y' || clean === 'ibrahim') {
+    return 'ads23b00133y@campusattend.com';
+  }
+
+  // Lecturer aliases
+  if (clean === 'wendy' || clean === 'drwendy' || clean === 'dr.wendy' || clean === 'dr-wendy') {
+    return 'dr.wendy@campusattend.com';
   }
   if (clean === 'admin') {
     return 'admin@attendance.local';
@@ -38,8 +53,9 @@ function resolveLoginIdentifier(input: string): string {
   if (clean === 'kwame') {
     return 'kwame@attendance.local';
   }
-  // For university index numbers / student IDs (e.g. ADS23B00133Y):
-  return `${clean}@attendance.local`;
+
+  // For any student ID entered without @ domain, default to .com
+  return `${clean}@campusattend.com`;
 }
 
 export const LoginModal: React.FC<LoginModalProps> = ({ onSuccess }) => {
@@ -60,34 +76,66 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onSuccess }) => {
     },
     {
       role: 'Lecturer',
-      name: 'Alice Mensah (Databases)',
-      email: 'alice@attendance.local',
+      name: 'Dr. Wendy',
+      email: 'dr.wendy@campusattend.com',
       icon: <BookOpen className="w-4 h-4 text-cyan-600" />,
-      badge: 'Mark Attendance',
-      badgeBg: 'bg-cyan-100 text-cyan-800'
-    },
-    {
-      role: 'Lecturer',
-      name: 'Kwame Boateng (Web Dev)',
-      email: 'kwame@attendance.local',
-      icon: <BookOpen className="w-4 h-4 text-cyan-600" />,
-      badge: 'Mark Attendance',
+      badge: 'Software Engineering',
       badgeBg: 'bg-cyan-100 text-cyan-800'
     },
     {
       role: 'Student',
-      name: 'Akosua Frimpong',
-      email: 'akosua@attendance.local',
+      name: 'Ibrahim Alhassan',
+      email: 'ads23b00133y@campusattend.com',
       icon: <GraduationCap className="w-4 h-4 text-emerald-600" />,
-      badge: 'View Records',
+      badge: 'ADS23B00133Y',
       badgeBg: 'bg-emerald-100 text-emerald-800'
     },
     {
       role: 'Student',
-      name: 'Yaw Osei',
-      email: 'yaw@attendance.local',
+      name: 'Derek Nhyira Yankyerah',
+      email: 'ads23b00113y@campusattend.com',
       icon: <GraduationCap className="w-4 h-4 text-emerald-600" />,
-      badge: 'View Records',
+      badge: 'ADS23B00113Y',
+      badgeBg: 'bg-emerald-100 text-emerald-800'
+    },
+    {
+      role: 'Student',
+      name: 'Eugene Narh Ayiku',
+      email: 'ads23b00245y@campusattend.com',
+      icon: <GraduationCap className="w-4 h-4 text-emerald-600" />,
+      badge: 'ADS23B00245Y',
+      badgeBg: 'bg-emerald-100 text-emerald-800'
+    },
+    {
+      role: 'Student',
+      name: 'Jebuni Mohammed Jamaldeen',
+      email: 'ads23b00188y@campusattend.com',
+      icon: <GraduationCap className="w-4 h-4 text-emerald-600" />,
+      badge: 'ADS23B00188Y',
+      badgeBg: 'bg-emerald-100 text-emerald-800'
+    },
+    {
+      role: 'Student',
+      name: 'Selorm Amu Kobla',
+      email: 'ads23b00112y@campusattend.com',
+      icon: <GraduationCap className="w-4 h-4 text-emerald-600" />,
+      badge: 'ADS23B00112Y',
+      badgeBg: 'bg-emerald-100 text-emerald-800'
+    },
+    {
+      role: 'Student',
+      name: 'Ocean Bliss',
+      email: 'bscs16bit0030y@campusattend.com',
+      icon: <GraduationCap className="w-4 h-4 text-emerald-600" />,
+      badge: 'BSCS16BIT0030Y',
+      badgeBg: 'bg-emerald-100 text-emerald-800'
+    },
+    {
+      role: 'Student',
+      name: 'Israel Ayiku',
+      email: 'ads23b00249y@campusattend.com',
+      icon: <GraduationCap className="w-4 h-4 text-emerald-600" />,
+      badge: 'ADS23B00249Y',
       badgeBg: 'bg-emerald-100 text-emerald-800'
     },
   ];
@@ -136,7 +184,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onSuccess }) => {
           Student Attendance System
         </h2>
         <p className="mt-2 text-sm text-slate-600 font-medium">
-          CS403 Capstone Project • Role-Based Academic Portal
+          CS403 Software Engineering Project • Role-Based Academic Portal
         </p>
       </div>
 

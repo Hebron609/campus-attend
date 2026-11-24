@@ -75,7 +75,7 @@ export default function Home() {
               Student Attendance Management System — Academic Portal
             </p>
             <p className="text-[11px] text-slate-400">
-              CS403 Capstone Project • Role-Based Academic Management
+              CS403 Software Engineering Project • Role-Based Academic Management
             </p>
           </div>
           <div className="flex items-center gap-4 text-[11px]">
