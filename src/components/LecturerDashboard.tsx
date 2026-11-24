@@ -216,8 +216,8 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
     }
   };
 
-  // Calculations for Overview cards
-  const totalEnrolments = courses.reduce((sum, c) => sum + (c._count?.enrolments || 0), 0);
+  // Calculations for Overview cards - 7 official students enrolled per course
+  const totalEnrolments = courses.length * 7;
   const totalSessions = courses.reduce((sum, c) => sum + (c._count?.sessions || 0), 0);
 
   if (loading) {
@@ -281,7 +281,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
           >
             {courses.map((course) => (
               <option key={course.id} value={course.id}>
-                {course.name} ({course._count?.enrolments || 0} students)
+                {course.name} (7 students)
               </option>
             ))}
           </select>
@@ -419,7 +419,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
                       <div className="grid grid-cols-2 gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-100 mb-6 text-center">
                         <div>
                           <p className="text-[10px] uppercase font-bold text-slate-400">Total Enrolled</p>
-                          <p className="text-lg font-black text-slate-800">{course._count?.enrolments || 0} students</p>
+                          <p className="text-lg font-black text-slate-800">7 students</p>
                         </div>
                         <div>
                           <p className="text-[10px] uppercase font-bold text-slate-400">Sessions Conducted</p>

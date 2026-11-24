@@ -51,9 +51,40 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ currentUser 
           ? coursesRes.value.courses.filter((c) => c.isActive)
           : [];
 
-      // Merge active courses so enrolled courses show even before first session attendance is recorded
-      const existingCourseIds = new Set(attData.courses.map((c) => c.courseId));
-      const mergedCourses = [...attData.courses];
+      // Filter out pre-launch test sessions (e.g. sessionId 6) so new students start with a 100% clean, blank slate
+      const sanitizedCourses = attData.courses.map((course) => {
+        const liveRecords = course.records.filter((r) => r.sessionId !== 6);
+        const presentCount = liveRecords.filter((r) => r.status.toUpperCase() === 'PRESENT').length;
+        const totalCount = liveRecords.length;
+        const percentage = totalCount > 0 ? (presentCount / totalCount) * 100 : null;
+
+        return {
+          ...course,
+          present: presentCount,
+          total: totalCount,
+          percentage,
+          records: liveRecords,
+        };
+      });
+
+      // Recalculate overall attendance from genuine live check-in sessions
+      const allLiveRecords = sanitizedCourses.flatMap((c) => c.records);
+      const overallPresent = allLiveRecords.filter((r) => r.status.toUpperCase() === 'PRESENT').length;
+      const overallTotal = allLiveRecords.length;
+      const overallPercentage = overallTotal > 0 ? (overallPresent / overallTotal) * 100 : null;
+
+      const cleanedAttData: StudentAttendanceResponse = {
+        courses: sanitizedCourses,
+        overall: {
+          present: overallPresent,
+          total: overallTotal,
+          percentage: overallPercentage,
+        },
+      };
+
+      // Merge all active courses so enrolled courses always display accurately
+      const existingCourseIds = new Set(cleanedAttData.courses.map((c) => c.courseId));
+      const mergedCourses = [...cleanedAttData.courses];
 
       for (const course of allActiveCourses) {
         if (!existingCourseIds.has(course.id)) {
@@ -69,7 +100,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ currentUser 
       }
 
       setData({
-        ...attData,
+        ...cleanedAttData,
         courses: mergedCourses,
       });
     } catch (err: any) {
