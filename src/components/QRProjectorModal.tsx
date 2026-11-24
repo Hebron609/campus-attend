@@ -73,6 +73,22 @@ export const QRProjectorModal: React.FC<QRProjectorModalProps> = ({
     setCheckinUrl(url);
 
     // Register active session PIN so students sitting too far to scan can simply enter the 6-digit PIN on /checkin
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('ait_active_pin', pin);
+        localStorage.setItem(
+          'ait_active_session',
+          JSON.stringify({
+            pin,
+            courseId: course.id,
+            courseName: course.name,
+            sessionDate,
+            roster: rosterData,
+          })
+        );
+      } catch {}
+    }
+
     fetch('/api/checkin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

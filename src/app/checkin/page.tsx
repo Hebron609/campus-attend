@@ -90,8 +90,19 @@ function CheckinContent() {
   // Verify student enrolment in the course session without requiring lecturer JWT
   const handleVerifyStudentIdentity = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // 1. Mandatory Student ID check
     if (!studentInput.trim()) {
-      setError('Please enter your Student ID or University Email');
+      setError('Please enter your Student ID (e.g. ADS23B00133Y)');
+      return;
+    }
+
+    // 2. Mandatory 6-Digit Lecture Hall PIN check
+    const cleanPin = pinInput.replace(/\D/g, '');
+    if (!cleanPin || cleanPin.length !== 6) {
+      setError(
+        'Lecture Hall PIN Required: You must enter the 6-Digit PIN displayed on the lecturer’s screen to verify you are physically present in class.'
+      );
       return;
     }
 
@@ -100,37 +111,68 @@ function CheckinContent() {
 
     try {
       let rosterList: { id: number; name: string; email: string }[] = [];
+      let pinVerified = false;
 
-      // 1. If 6-digit PIN entered (e.g. by back-row students), fetch active course session & roster dynamically
-      const cleanPin = pinInput.replace(/\D/g, '');
-      if (cleanPin.length === 6) {
+      // Check A: Query active live session by 6-digit PIN over internal API
+      try {
+        const pinRes = await fetch(`/api/checkin?pin=${cleanPin}`);
+        if (pinRes.ok) {
+          const pinData = await pinRes.json();
+          if (pinData.active && pinData.session) {
+            setSelectedCourseId(pinData.session.courseId);
+            setSessionDate(pinData.session.sessionDate);
+            if (Array.isArray(pinData.session.roster) && pinData.session.roster.length > 0) {
+              rosterList = pinData.session.roster;
+            }
+            pinVerified = true;
+          }
+        }
+      } catch {
+        // network fallback
+      }
+
+      // Check B: If URL contained matching pinParam from a scanned QR Code
+      if (!pinVerified && pinParam && cleanPin === pinParam.replace(/\D/g, '')) {
+        pinVerified = true;
+        if (rosterParam) {
+          try {
+            rosterList = JSON.parse(decodeURIComponent(rosterParam));
+          } catch {
+            rosterList = [];
+          }
+        }
+      }
+
+      // Check C: Same-device / LocalStorage session sync (for local or demo testing)
+      if (!pinVerified && typeof window !== 'undefined') {
         try {
-          const pinRes = await fetch(`/api/checkin?pin=${cleanPin}`);
-          if (pinRes.ok) {
-            const pinData = await pinRes.json();
-            if (pinData.active && pinData.session) {
-              setSelectedCourseId(pinData.session.courseId);
-              setSessionDate(pinData.session.sessionDate);
-              if (Array.isArray(pinData.session.roster) && pinData.session.roster.length > 0) {
-                rosterList = pinData.session.roster;
+          const rawLocalSession = localStorage.getItem('ait_active_session');
+          if (rawLocalSession) {
+            const localSession = JSON.parse(rawLocalSession);
+            if (localSession.pin && localSession.pin.replace(/\D/g, '') === cleanPin) {
+              pinVerified = true;
+              setSelectedCourseId(localSession.courseId);
+              setSessionDate(localSession.sessionDate);
+              if (Array.isArray(localSession.roster) && localSession.roster.length > 0) {
+                rosterList = localSession.roster;
               }
             }
           }
         } catch {
-          // continue fallback
+          // ignore
         }
       }
 
-      // 2. Check if roster was embedded in the scanned QR Code URL
-      if (rosterList.length === 0 && rosterParam) {
-        try {
-          rosterList = JSON.parse(decodeURIComponent(rosterParam));
-        } catch {
-          rosterList = [];
-        }
+      // If the PIN does not match any active lecture session, strictly BLOCK access
+      if (!pinVerified) {
+        setError(
+          `Invalid Lecture Hall PIN: "${cleanPin}" does not match any active class session. You must be in the lecture hall and enter the PIN displayed on the screen.`
+        );
+        setLoading(false);
+        return;
       }
 
-      // 3. If no roster yet, try backend or fallback to enrolled list
+      // If rosterList is empty, resolve via enrolments endpoint or departmental list
       if (rosterList.length === 0) {
         try {
           const res = await api.enrolments.list(selectedCourseId);
@@ -140,7 +182,6 @@ function CheckinContent() {
             email: e.student.email,
           }));
         } catch {
-          // On mobile phones without lecturer tokens, use enrolled students fallback
           rosterList = demoStudents;
         }
       }
@@ -150,7 +191,7 @@ function CheckinContent() {
 
       if (!match) {
         setError(
-          `Enrolment Not Found: "${studentInput}" was not found in this course session roster. Please verify your Student ID (e.g. ADS23B00133Y) or ensure the 6-Digit PIN is correct.`
+          `Enrolment Not Found: Student ID "${studentInput}" was not found in this course session roster. Please verify your Student ID (e.g. ADS23B00133Y) or confirm your enrolment with your lecturer.`
         );
         setLoading(false);
         return;
@@ -310,6 +351,7 @@ function CheckinContent() {
                 </label>
                 <input
                   type="text"
+                  required
                   maxLength={6}
                   placeholder="e.g. 582194 (Displayed on Projector)"
                   value={pinInput}
