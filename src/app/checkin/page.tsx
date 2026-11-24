@@ -145,12 +145,12 @@ function CheckinContent() {
         }
       }
 
-      // Search student by Student ID (e.g. STU-0005, ADS23B00133Y), numeric ID (#5), or institutional email
+      // Search student by Student ID (e.g. ADS23B00133Y), numeric ID (#5), or institutional email
       const match = rosterList.find((s) => matchStudentQuery(s, studentInput));
 
       if (!match) {
         setError(
-          `Enrolment Not Found: "${studentInput}" was not found in this course session roster. Please verify your Student ID (e.g. STU-0005) or ensure the 6-Digit PIN is correct.`
+          `Enrolment Not Found: "${studentInput}" was not found in this course session roster. Please verify your Student ID (e.g. ADS23B00133Y) or ensure the 6-Digit PIN is correct.`
         );
         setLoading(false);
         return;
@@ -272,7 +272,7 @@ function CheckinContent() {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. STU-0005, ADS23B00133Y, or 5"
+                    placeholder="e.g. ADS23B00133Y"
                     value={studentInput}
                     onChange={(e) => setStudentInput(e.target.value)}
                     className="block w-full pl-10 pr-4 py-2.5 sm:py-3 text-xs sm:text-sm text-slate-900 bg-slate-50/70 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#007791] focus:border-transparent font-medium"

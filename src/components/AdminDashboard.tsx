@@ -887,7 +887,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
                   <input
                     type="text"
                     required
-                    placeholder="e.g. ADS23B00133Y or STU0005"
+                    placeholder="e.g. ADS23B00133Y"
                     value={newUserData.studentId}
                     onChange={(e) => {
                       const idVal = e.target.value;
