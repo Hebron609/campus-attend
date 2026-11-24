@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { api } from '@/lib/api';
 import { User } from '@/types';
 import { AITLogo } from './AITLogo';
-import { Lock, Mail, Eye, EyeOff, ArrowRight, Shield, BookOpen, GraduationCap, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 
 interface LoginModalProps {
   onSuccess: (user: User) => void;
@@ -44,17 +44,13 @@ function resolveLoginIdentifier(input: string): string {
   if (clean === 'wendy' || clean === 'drwendy' || clean === 'dr.wendy' || clean === 'dr-wendy') {
     return 'dr.wendy@campusattend.com';
   }
-  if (clean === 'admin') {
-    return 'admin@attendance.local';
-  }
-  if (clean === 'alice') {
-    return 'alice@attendance.local';
-  }
-  if (clean === 'kwame') {
-    return 'kwame@attendance.local';
+
+  // Administrator alias
+  if (clean === 'admin' || clean === 'administrator') {
+    return 'admin@campusattend.com';
   }
 
-  // For any student ID entered without @ domain, default to .com
+  // For any student ID entered without @ domain, default to @campusattend.com
   return `${clean}@campusattend.com`;
 }
 
@@ -64,81 +60,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onSuccess }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const demoAccounts = [
-    {
-      role: 'Administrator',
-      name: 'System Admin',
-      email: 'admin@attendance.local',
-      icon: <Shield className="w-4 h-4 text-amber-500" />,
-      badge: 'Full Access',
-      badgeBg: 'bg-amber-100 text-amber-800'
-    },
-    {
-      role: 'Lecturer',
-      name: 'Dr. Wendy',
-      email: 'dr.wendy@campusattend.com',
-      icon: <BookOpen className="w-4 h-4 text-cyan-600" />,
-      badge: 'Software Engineering',
-      badgeBg: 'bg-cyan-100 text-cyan-800'
-    },
-    {
-      role: 'Student',
-      name: 'Ibrahim Alhassan',
-      email: 'ads23b00133y@campusattend.com',
-      icon: <GraduationCap className="w-4 h-4 text-emerald-600" />,
-      badge: 'ADS23B00133Y',
-      badgeBg: 'bg-emerald-100 text-emerald-800'
-    },
-    {
-      role: 'Student',
-      name: 'Derek Nhyira Yankyerah',
-      email: 'ads23b00113y@campusattend.com',
-      icon: <GraduationCap className="w-4 h-4 text-emerald-600" />,
-      badge: 'ADS23B00113Y',
-      badgeBg: 'bg-emerald-100 text-emerald-800'
-    },
-    {
-      role: 'Student',
-      name: 'Eugene Narh Ayiku',
-      email: 'ads23b00245y@campusattend.com',
-      icon: <GraduationCap className="w-4 h-4 text-emerald-600" />,
-      badge: 'ADS23B00245Y',
-      badgeBg: 'bg-emerald-100 text-emerald-800'
-    },
-    {
-      role: 'Student',
-      name: 'Jebuni Mohammed Jamaldeen',
-      email: 'ads23b00188y@campusattend.com',
-      icon: <GraduationCap className="w-4 h-4 text-emerald-600" />,
-      badge: 'ADS23B00188Y',
-      badgeBg: 'bg-emerald-100 text-emerald-800'
-    },
-    {
-      role: 'Student',
-      name: 'Selorm Amu Kobla',
-      email: 'ads23b00112y@campusattend.com',
-      icon: <GraduationCap className="w-4 h-4 text-emerald-600" />,
-      badge: 'ADS23B00112Y',
-      badgeBg: 'bg-emerald-100 text-emerald-800'
-    },
-    {
-      role: 'Student',
-      name: 'Ocean Bliss',
-      email: 'bscs16bit0030y@campusattend.com',
-      icon: <GraduationCap className="w-4 h-4 text-emerald-600" />,
-      badge: 'BSCS16BIT0030Y',
-      badgeBg: 'bg-emerald-100 text-emerald-800'
-    },
-    {
-      role: 'Student',
-      name: 'Israel Ayiku',
-      email: 'ads23b00249y@campusattend.com',
-      icon: <GraduationCap className="w-4 h-4 text-emerald-600" />,
-      badge: 'ADS23B00249Y',
-      badgeBg: 'bg-emerald-100 text-emerald-800'
-    },
-  ];
 
   const handleLogin = async (e?: React.FormEvent, customEmail?: string, customPass?: string) => {
     if (e) e.preventDefault();
@@ -162,12 +83,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onSuccess }) => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleSelectDemo = (demoEmail: string) => {
-    setEmail(demoEmail);
-    setPassword('password123');
-    handleLogin(undefined, demoEmail, 'password123');
   };
 
   return (
@@ -214,7 +129,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onSuccess }) => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="e.g. ADS23B00133Y or STU-0004"
+                  placeholder="e.g. ADS23B00133Y or admin@campusattend.com"
                   className="block w-full pl-10 pr-4 py-2.5 sm:py-3 text-sm text-slate-900 bg-slate-50/70 border border-slate-300 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#007791] focus:border-transparent transition-all"
                 />
               </div>
@@ -261,50 +176,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onSuccess }) => {
               )}
             </button>
           </form>
-
-          {/* Quick Demo Login Section */}
-          <div className="mt-8 pt-6 border-t border-slate-200">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                Demo Accounts (Click to test)
-              </span>
-              <span className="text-[11px] font-semibold text-cyan-800 bg-cyan-50 px-2 py-0.5 rounded-full border border-cyan-200">
-                All roles ready
-              </span>
-            </div>
-
-            <div className="space-y-2">
-              {demoAccounts.map((account) => (
-                <button
-                  key={account.email}
-                  type="button"
-                  onClick={() => handleSelectDemo(account.email)}
-                  disabled={loading}
-                  className="w-full text-left p-2.5 rounded-xl border border-slate-200/80 hover:border-cyan-400 hover:bg-cyan-50/50 flex items-center justify-between transition-all duration-150 group cursor-pointer"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <div className="p-1.5 rounded-lg bg-slate-100 group-hover:bg-white shadow-2xs">
-                      {account.icon}
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-slate-800 group-hover:text-[#007791] leading-tight">
-                        {account.name}
-                      </p>
-                      <p className="text-[11px] text-slate-400">{account.email}</p>
-                    </div>
-                  </div>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${account.badgeBg}`}>
-                    {account.role}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
 
         {/* Footer info */}
         <p className="mt-6 text-center text-xs text-slate-500">
-          Student Attendance System • Developed for CS403 Quality Assurance & Systems
+          Student Attendance System • CS403 Software Engineering Project
         </p>
       </div>
     </div>
