@@ -116,7 +116,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onSuccess }) => {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-                  Student ID / University Login
+                  Student ID
                 </label>
                 <span className="text-[10px] font-semibold text-slate-400">or Faculty Email</span>
               </div>
@@ -177,11 +177,6 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onSuccess }) => {
             </button>
           </form>
         </div>
-
-        {/* Footer info */}
-        <p className="mt-6 text-center text-xs text-slate-500">
-          Student Attendance System • CS403 Software Engineering Project
-        </p>
       </div>
     </div>
   );

@@ -601,7 +601,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({ currentUse
                     <tr>
                       <th className="py-3.5 px-4">#</th>
                       <th className="py-3.5 px-4">Student Name</th>
-                      <th className="py-3.5 px-4">Student ID / Index</th>
+                      <th className="py-3.5 px-4">Student ID</th>
                       <th className="py-3.5 px-4 text-center">Status</th>
                       <th className="py-3.5 px-4 text-right">Attendance Action</th>
                     </tr>

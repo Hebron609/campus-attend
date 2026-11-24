@@ -36,8 +36,42 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ currentUser 
   const fetchAttendance = async () => {
     try {
       setError(null);
-      const res = await api.student.getAttendance();
-      setData(res);
+      const [attRes, coursesRes] = await Promise.allSettled([
+        api.student.getAttendance(),
+        api.courses.list(),
+      ]);
+
+      const attData: StudentAttendanceResponse =
+        attRes.status === 'fulfilled'
+          ? attRes.value
+          : { courses: [], overall: { present: 0, total: 0, percentage: null } };
+
+      const allActiveCourses =
+        coursesRes.status === 'fulfilled'
+          ? coursesRes.value.courses.filter((c) => c.isActive)
+          : [];
+
+      // Merge active courses so enrolled courses show even before first session attendance is recorded
+      const existingCourseIds = new Set(attData.courses.map((c) => c.courseId));
+      const mergedCourses = [...attData.courses];
+
+      for (const course of allActiveCourses) {
+        if (!existingCourseIds.has(course.id)) {
+          mergedCourses.push({
+            courseId: course.id,
+            courseName: course.name,
+            present: 0,
+            total: 0,
+            percentage: null,
+            records: [],
+          });
+        }
+      }
+
+      setData({
+        ...attData,
+        courses: mergedCourses,
+      });
     } catch (err: any) {
       setError(err?.message || 'Failed to load attendance records');
     } finally {
@@ -311,8 +345,12 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ currentUser 
 
                     <div className="space-y-2 mb-4">
                       <div className="flex justify-between text-xs font-semibold text-slate-600">
-                        <span>Attended: {course.present} of {course.total} recorded sessions</span>
-                        <span>{pct !== null ? `${pct.toFixed(1)}%` : 'Pending'}</span>
+                        <span>
+                          {course.total === 0
+                            ? 'No recorded sessions yet'
+                            : `Attended: ${course.present} of ${course.total} recorded sessions`}
+                        </span>
+                        <span>{pct !== null ? `${pct.toFixed(1)}%` : 'No Sessions Yet'}</span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
                         <div

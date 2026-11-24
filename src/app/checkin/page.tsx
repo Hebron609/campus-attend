@@ -261,7 +261,7 @@ function CheckinContent() {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
-                    Student ID / University Index Number
+                    Student ID
                   </label>
                   <span className="text-[10px] font-semibold text-slate-400">or School Email</span>
                 </div>
@@ -333,30 +333,6 @@ function CheckinContent() {
                 )}
               </button>
             </form>
-
-            {/* Quick Demo Fillers for Mobile Testing */}
-            <div className="pt-4 border-t border-slate-100">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
-                Tap demo student ID to test:
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                {demoStudents.map((ds) => (
-                  <button
-                    key={ds.id}
-                    type="button"
-                    onClick={() => setStudentInput(formatStudentId(ds))}
-                    className="p-2.5 rounded-xl bg-slate-100 hover:bg-cyan-50 hover:border-cyan-300 border border-transparent text-left text-xs font-bold text-slate-700 transition-all cursor-pointer group"
-                  >
-                    <p className="truncate text-slate-900 group-hover:text-[#007791]">{ds.name}</p>
-                    <div className="flex items-center gap-1.5 mt-0.5">
-                      <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-cyan-100/70 text-[#007791]">
-                        {formatStudentId(ds)}
-                      </span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
         )}
 

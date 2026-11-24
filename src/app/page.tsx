@@ -78,13 +78,13 @@ export default function Home() {
               CS403 Software Engineering Project • Role-Based Academic Management
             </p>
           </div>
-          <div className="flex items-center gap-4 text-[11px]">
-            <span className="flex items-center gap-1.5 text-emerald-700 font-semibold">
-              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              Live Backend Connected
+          <div className="flex items-center gap-4 text-[11px] text-slate-500 font-medium">
+            <span className="flex items-center gap-1.5 text-[#007791] font-semibold">
+              <span className="w-2 h-2 rounded-full bg-[#007791]"></span>
+              Official Academic Portal
             </span>
-            <span className="text-slate-300">|</span>
-            <span>PostgreSQL & Neon DB</span>
+            <span className="text-slate-300">•</span>
+            <span>Academic Year 2025/2026</span>
           </div>
         </div>
       </footer>

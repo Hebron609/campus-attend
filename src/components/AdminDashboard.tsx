@@ -880,7 +880,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser }) =
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label className="block text-xs font-bold text-slate-700 uppercase">
-                      Student ID / University Index No.
+                      Student ID
                     </label>
                     <span className="text-[10px] text-slate-400 font-mono">Used for login & verification</span>
                   </div>
